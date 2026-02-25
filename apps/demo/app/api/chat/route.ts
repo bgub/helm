@@ -1,4 +1,3 @@
-import "../../../lib/ses-init";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -12,6 +11,7 @@ import {
 import { createCrag, fs, type Permission } from "crag";
 import { z } from "zod";
 import { requestApproval } from "../../../lib/approvals";
+import { evaluate } from "../../../lib/sandbox";
 
 const SYSTEM_PROMPT = `You are a helpful assistant with access to the local filesystem through crag, a typed tool framework.
 
@@ -107,20 +107,8 @@ export async function POST(req: Request) {
             }),
             execute: async ({ code }, { toolCallId }) => {
               activeToolCallId = toolCallId;
-              const compartment = new Compartment({
-                globals: {
-                  agent,
-                  console: {
-                    log: (...a: unknown[]) => a,
-                    error: (...a: unknown[]) => a,
-                  },
-                },
-                __options__: true,
-              });
-              const wrapped = `(async () => {\n${code}\n})()`;
               try {
-                const result = await compartment.evaluate(wrapped);
-                return result ?? { ok: true };
+                return await evaluate(code, agent);
               } catch (e) {
                 return { error: e instanceof Error ? e.message : String(e) };
               }
