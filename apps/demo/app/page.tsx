@@ -238,16 +238,27 @@ function ToolCall({
     input !== null &&
     "code" in input;
 
-  const statusDot = (
+  const chevron = (
     <span
       style={{
-        width: 8,
-        height: 8,
-        borderRadius: "50%",
-        background: isDone ? (isError ? "#ef4444" : "#10a37f") : "#f59e0b",
-        flexShrink: 0,
+        marginLeft: "auto",
+        color: "#999",
+        fontSize: "0.75rem",
+        transition: "transform 0.2s",
+        transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
+        display: "inline-block",
       }}
-    />
+    >
+      &#x25BE;
+    </span>
+  );
+
+  const waitingBadge = isWaiting && (
+    <span
+      style={{ fontSize: "0.6875rem", color: "#92400e", fontWeight: 500 }}
+    >
+      Awaiting approval
+    </span>
   );
 
   const resultContent = isDone
@@ -258,109 +269,6 @@ function ToolCall({
         ? "Running..."
         : "Calling...";
 
-  const resultToggle = (
-    <button
-      type="button"
-      onClick={() => setCollapsed(!collapsed)}
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: "0.5rem",
-        width: "100%",
-        padding: "0.5rem 0.875rem",
-        background: "transparent",
-        border: "none",
-        borderTop: "1px solid #e5e5e5",
-        cursor: "pointer",
-        fontFamily: "inherit",
-        fontSize: "0.75rem",
-        textAlign: "left",
-        color: "#999",
-      }}
-    >
-      <span>Result</span>
-      <span
-        style={{
-          marginLeft: "auto",
-          transition: "transform 0.2s",
-          transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
-          display: "inline-block",
-        }}
-      >
-        &#x25BE;
-      </span>
-    </button>
-  );
-
-  const resultBlock = (
-    <pre
-      style={{
-        margin: 0,
-        padding: "0.75rem 0.875rem",
-        background: "#fafafa",
-        borderTop: "1px solid #e5e5e5",
-        overflow: "auto",
-        fontSize: "0.75rem",
-        lineHeight: 1.6,
-        fontFamily: MONO,
-        color: isError ? "#ef4444" : undefined,
-      }}
-    >
-      {resultContent}
-    </pre>
-  );
-
-  if (isExecute) {
-    return (
-      <div
-        style={{
-          margin: "0.5rem 0",
-          border: `1px solid ${isWaiting ? "#fbbf24" : "#e5e5e5"}`,
-          borderRadius: 12,
-          overflow: "hidden",
-          fontSize: "0.8125rem",
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.625rem 0.875rem",
-            fontSize: "0.8125rem",
-            color: "#0d0d0d",
-          }}
-        >
-          {statusDot}
-          <span style={{ fontWeight: 600, fontFamily: MONO }}>execute</span>
-          {isWaiting && (
-            <span
-              style={{
-                fontSize: "0.6875rem",
-                color: "#92400e",
-                fontWeight: 500,
-              }}
-            >
-              Awaiting approval
-            </span>
-          )}
-        </div>
-        <div style={{ borderTop: "1px solid #e5e5e5" }}>
-          <HighlightedCode code={formatCode(input)} />
-        </div>
-        {isWaiting && (
-          <ApprovalBanner
-            approval={pendingApproval}
-            onRespond={onApprovalResponse}
-          />
-        )}
-        {resultToggle}
-        {!collapsed && resultBlock}
-      </div>
-    );
-  }
-
-  // Search and other tool calls: fully collapsible (current behavior)
   return (
     <div
       style={{
@@ -371,6 +279,94 @@ function ToolCall({
         fontSize: "0.8125rem",
       }}
     >
+      {/* Header */}
+      {isExecute ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.625rem 0.875rem",
+            color: "#0d0d0d",
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: isDone
+                ? isError
+                  ? "#ef4444"
+                  : "#10a37f"
+                : "#f59e0b",
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ fontWeight: 600, fontFamily: MONO }}>execute</span>
+          {waitingBadge}
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setCollapsed(!collapsed)}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            width: "100%",
+            padding: "0.625rem 0.875rem",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            fontFamily: "inherit",
+            fontSize: "0.8125rem",
+            textAlign: "left",
+            color: "#0d0d0d",
+          }}
+        >
+          <span
+            style={{
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              background: isDone
+                ? isError
+                  ? "#ef4444"
+                  : "#10a37f"
+                : "#f59e0b",
+              flexShrink: 0,
+            }}
+          />
+          <span style={{ fontWeight: 600, fontFamily: MONO }}>
+            {isWaiting ? pendingApproval.operation : name}
+          </span>
+          <span style={{ color: "#666", fontFamily: MONO }}>
+            {isWaiting
+              ? `(${pendingApproval.args.map((a) => JSON.stringify(a)).join(", ")})`
+              : `(${formatArgs(input)})`}
+          </span>
+          {waitingBadge}
+          {chevron}
+        </button>
+      )}
+
+      {/* Code body (execute only) */}
+      {isExecute && (
+        <div style={{ borderTop: "1px solid #e5e5e5" }}>
+          <HighlightedCode code={formatCode(input)} />
+        </div>
+      )}
+
+      {/* Approval banner */}
+      {isWaiting && (
+        <ApprovalBanner
+          approval={pendingApproval}
+          onRespond={onApprovalResponse}
+        />
+      )}
+
+      {/* Result toggle */}
       <button
         type="button"
         onClick={() => setCollapsed(!collapsed)}
@@ -379,56 +375,39 @@ function ToolCall({
           alignItems: "center",
           gap: "0.5rem",
           width: "100%",
-          padding: "0.625rem 0.875rem",
+          padding: "0.5rem 0.875rem",
           background: "transparent",
           border: "none",
+          borderTop: "1px solid #e5e5e5",
           cursor: "pointer",
           fontFamily: "inherit",
-          fontSize: "0.8125rem",
+          fontSize: "0.75rem",
           textAlign: "left",
-          color: "#0d0d0d",
+          color: "#999",
         }}
       >
-        {statusDot}
-        <span style={{ fontWeight: 600, fontFamily: MONO }}>
-          {isWaiting ? pendingApproval.operation : name}
-        </span>
-        <span style={{ color: "#666", fontFamily: MONO }}>
-          {isWaiting
-            ? `(${pendingApproval.args.map((a) => JSON.stringify(a)).join(", ")})`
-            : `(${formatArgs(input)})`}
-        </span>
-        {isWaiting && (
-          <span
-            style={{
-              fontSize: "0.6875rem",
-              color: "#92400e",
-              fontWeight: 500,
-            }}
-          >
-            Awaiting approval
-          </span>
-        )}
-        <span
+        <span>Result</span>
+        {chevron}
+      </button>
+
+      {/* Result content */}
+      {!collapsed && (
+        <pre
           style={{
-            marginLeft: "auto",
-            color: "#999",
+            margin: 0,
+            padding: "0.75rem 0.875rem",
+            background: "#fafafa",
+            borderTop: "1px solid #e5e5e5",
+            overflow: "auto",
             fontSize: "0.75rem",
-            transition: "transform 0.2s",
-            transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
-            display: "inline-block",
+            lineHeight: 1.6,
+            fontFamily: MONO,
+            color: isError ? "#ef4444" : undefined,
           }}
         >
-          &#x25BE;
-        </span>
-      </button>
-      {isWaiting && (
-        <ApprovalBanner
-          approval={pendingApproval}
-          onRespond={onApprovalResponse}
-        />
+          {resultContent}
+        </pre>
       )}
-      {!collapsed && resultBlock}
     </div>
   );
 }
