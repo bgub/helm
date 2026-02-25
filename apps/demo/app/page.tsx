@@ -112,17 +112,7 @@ function HighlightedCode({ code: source }: { code: string }) {
   }, [source]);
 
   return (
-    <pre
-      style={{
-        margin: 0,
-        padding: "0.75rem 0.875rem",
-        background: "#f8f8f8",
-        overflow: "auto",
-        fontSize: "0.75rem",
-        lineHeight: 1.6,
-        fontFamily: MONO,
-      }}
-    >
+    <pre className="m-0 px-3.5 py-3 bg-[#f8f8f8] overflow-auto text-xs leading-[1.6] font-mono">
       {html ? (
         <code
           // biome-ignore lint: innerHTML is from shiki, not user input
@@ -134,14 +124,6 @@ function HighlightedCode({ code: source }: { code: string }) {
     </pre>
   );
 }
-
-const PERM_COLORS: Record<Permission, string> = {
-  allow: "#10a37f",
-  ask: "#f59e0b",
-  deny: "#ef4444",
-};
-
-const MONO = "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace";
 
 // ── Sub-components ──────────────────────────────────────────────────────
 
@@ -160,48 +142,18 @@ function ApprovalBanner({
   onRespond: (id: string, approved: boolean) => void;
 }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "flex-end",
-        gap: "0.5rem",
-        padding: "0.5rem 0.875rem",
-        background: "#fffbeb",
-        borderTop: "1px solid #e5e5e5",
-      }}
-    >
+    <div className="flex items-center justify-end gap-2 px-3.5 py-2 bg-amber-50 border-t border-neutral-200">
       <button
         type="button"
         onClick={() => onRespond(approval.id, true)}
-        style={{
-          padding: "2px 10px",
-          fontSize: "0.6875rem",
-          fontWeight: 600,
-          fontFamily: "inherit",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          backgroundColor: PERM_COLORS.allow,
-          color: "#fff",
-        }}
+        className="px-2.5 py-0.5 text-[0.6875rem] font-semibold rounded cursor-pointer bg-permit text-white"
       >
         Allow
       </button>
       <button
         type="button"
         onClick={() => onRespond(approval.id, false)}
-        style={{
-          padding: "2px 10px",
-          fontSize: "0.6875rem",
-          fontWeight: 600,
-          fontFamily: "inherit",
-          border: "none",
-          borderRadius: 4,
-          cursor: "pointer",
-          backgroundColor: PERM_COLORS.deny,
-          color: "#fff",
-        }}
+        className="px-2.5 py-0.5 text-[0.6875rem] font-semibold rounded cursor-pointer bg-danger text-white"
       >
         Deny
       </button>
@@ -238,25 +190,20 @@ function ToolCall({
     input !== null &&
     "code" in input;
 
+  const dotColor = isDone ? (isError ? "bg-danger" : "bg-permit") : "bg-warn";
+
   const chevron = (
     <span
-      style={{
-        marginLeft: "auto",
-        color: "#999",
-        fontSize: "0.75rem",
-        transition: "transform 0.2s",
-        transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
-        display: "inline-block",
-      }}
+      className={`ml-auto text-[#999] text-xs transition-transform duration-200 inline-block ${
+        collapsed ? "" : "rotate-180"
+      }`}
     >
       &#x25BE;
     </span>
   );
 
   const waitingBadge = isWaiting && (
-    <span
-      style={{ fontSize: "0.6875rem", color: "#92400e", fontWeight: 500 }}
-    >
+    <span className="text-[0.6875rem] text-amber-800 font-medium">
       Awaiting approval
     </span>
   );
@@ -271,77 +218,28 @@ function ToolCall({
 
   return (
     <div
-      style={{
-        margin: "0.5rem 0",
-        border: `1px solid ${isWaiting ? "#fbbf24" : "#e5e5e5"}`,
-        borderRadius: 12,
-        overflow: "hidden",
-        fontSize: "0.8125rem",
-      }}
+      className={`my-2 border rounded-xl overflow-hidden text-[0.8125rem] ${
+        isWaiting ? "border-amber-400" : "border-neutral-200"
+      }`}
     >
       {/* Header */}
       {isExecute ? (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            padding: "0.625rem 0.875rem",
-            color: "#0d0d0d",
-          }}
-        >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: isDone
-                ? isError
-                  ? "#ef4444"
-                  : "#10a37f"
-                : "#f59e0b",
-              flexShrink: 0,
-            }}
-          />
-          <span style={{ fontWeight: 600, fontFamily: MONO }}>execute</span>
+        <div className="flex items-center gap-2 px-3.5 py-2.5 text-[#0d0d0d]">
+          <span className={`size-2 rounded-full shrink-0 ${dotColor}`} />
+          <span className="font-semibold font-mono">execute</span>
           {waitingBadge}
         </div>
       ) : (
         <button
           type="button"
           onClick={() => setCollapsed(!collapsed)}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.5rem",
-            width: "100%",
-            padding: "0.625rem 0.875rem",
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            fontFamily: "inherit",
-            fontSize: "0.8125rem",
-            textAlign: "left",
-            color: "#0d0d0d",
-          }}
+          className="flex items-center gap-2 w-full px-3.5 py-2.5 cursor-pointer text-[0.8125rem] text-left text-[#0d0d0d]"
         >
-          <span
-            style={{
-              width: 8,
-              height: 8,
-              borderRadius: "50%",
-              background: isDone
-                ? isError
-                  ? "#ef4444"
-                  : "#10a37f"
-                : "#f59e0b",
-              flexShrink: 0,
-            }}
-          />
-          <span style={{ fontWeight: 600, fontFamily: MONO }}>
+          <span className={`size-2 rounded-full shrink-0 ${dotColor}`} />
+          <span className="font-semibold font-mono">
             {isWaiting ? pendingApproval.operation : name}
           </span>
-          <span style={{ color: "#666", fontFamily: MONO }}>
+          <span className="text-[#666] font-mono">
             {isWaiting
               ? `(${pendingApproval.args.map((a) => JSON.stringify(a)).join(", ")})`
               : `(${formatArgs(input)})`}
@@ -353,7 +251,7 @@ function ToolCall({
 
       {/* Code body (execute only) */}
       {isExecute && (
-        <div style={{ borderTop: "1px solid #e5e5e5" }}>
+        <div className="border-t border-neutral-200">
           <HighlightedCode code={formatCode(input)} />
         </div>
       )}
@@ -370,21 +268,7 @@ function ToolCall({
       <button
         type="button"
         onClick={() => setCollapsed(!collapsed)}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "0.5rem",
-          width: "100%",
-          padding: "0.5rem 0.875rem",
-          background: "transparent",
-          border: "none",
-          borderTop: "1px solid #e5e5e5",
-          cursor: "pointer",
-          fontFamily: "inherit",
-          fontSize: "0.75rem",
-          textAlign: "left",
-          color: "#999",
-        }}
+        className="flex items-center gap-2 w-full px-3.5 py-2 border-t border-neutral-200 cursor-pointer text-xs text-left text-[#999]"
       >
         <span>Result</span>
         {chevron}
@@ -393,17 +277,9 @@ function ToolCall({
       {/* Result content */}
       {!collapsed && (
         <pre
-          style={{
-            margin: 0,
-            padding: "0.75rem 0.875rem",
-            background: "#fafafa",
-            borderTop: "1px solid #e5e5e5",
-            overflow: "auto",
-            fontSize: "0.75rem",
-            lineHeight: 1.6,
-            fontFamily: MONO,
-            color: isError ? "#ef4444" : undefined,
-          }}
+          className={`m-0 px-3.5 py-3 bg-[#fafafa] border-t border-neutral-200 overflow-auto text-xs leading-[1.6] font-mono ${
+            isError ? "text-danger" : ""
+          }`}
         >
           {resultContent}
         </pre>
@@ -414,17 +290,12 @@ function ToolCall({
 
 function ThinkingDots() {
   return (
-    <div style={{ display: "flex", gap: 4, padding: "0.25rem 0" }}>
+    <div className="flex gap-1 py-1">
       {[0, 1, 2].map((i) => (
         <div
           key={i}
-          style={{
-            width: 7,
-            height: 7,
-            borderRadius: "50%",
-            backgroundColor: "#acacbe",
-            animation: `pulse-dot 1.4s ease-in-out ${i * 0.2}s infinite`,
-          }}
+          className="size-[7px] rounded-full bg-[#acacbe] animate-[pulse-dot_1.4s_ease-in-out_infinite]"
+          style={{ animationDelay: `${i * 0.2}s` }}
         />
       ))}
     </div>
@@ -445,14 +316,9 @@ function PermissionControl({
   const options: Permission[] = ["allow", "ask", "deny"];
   return (
     <div
-      style={{
-        display: "inline-flex",
-        borderRadius: 6,
-        overflow: "hidden",
-        border: "1px solid #e5e5e5",
-        opacity: disabled ? 0.4 : 1,
-        pointerEvents: disabled ? "none" : "auto",
-      }}
+      className={`inline-flex rounded-md overflow-hidden border border-neutral-200 ${
+        disabled ? "opacity-40 pointer-events-none" : ""
+      }`}
     >
       {options.map((opt) => {
         const active = value === opt;
@@ -461,17 +327,11 @@ function PermissionControl({
             key={opt}
             type="button"
             onClick={() => onChange(opt)}
-            style={{
-              padding: "2px 8px",
-              fontSize: "0.6875rem",
-              fontWeight: 500,
-              fontFamily: "inherit",
-              border: "none",
-              cursor: "pointer",
-              backgroundColor: active ? PERM_COLORS[opt] : "#fff",
-              color: active ? "#fff" : "#666",
-              transition: "all 0.15s",
-            }}
+            className={`px-2 py-0.5 text-[0.6875rem] font-medium cursor-pointer transition-all duration-150 ${
+              active
+                ? `text-white ${opt === "allow" ? "bg-permit" : opt === "ask" ? "bg-warn" : "bg-danger"}`
+                : "bg-white text-[#666]"
+            }`}
           >
             {opt}
           </button>
@@ -494,31 +354,14 @@ function Toggle({
     <button
       type="button"
       onClick={() => onChange(!checked)}
-      style={{
-        position: "relative",
-        width: 36,
-        height: 20,
-        borderRadius: 10,
-        border: "none",
-        backgroundColor: checked ? "#10a37f" : "#d9d9e3",
-        cursor: "pointer",
-        padding: 0,
-        transition: "background-color 0.2s",
-        flexShrink: 0,
-      }}
+      className={`relative w-9 h-5 rounded-[10px] cursor-pointer p-0 transition-colors duration-200 shrink-0 ${
+        checked ? "bg-permit" : "bg-[#d9d9e3]"
+      }`}
     >
       <span
-        style={{
-          position: "absolute",
-          top: 2,
-          left: checked ? 18 : 2,
-          width: 16,
-          height: 16,
-          borderRadius: "50%",
-          backgroundColor: "#fff",
-          transition: "left 0.2s",
-          boxShadow: "0 1px 2px rgba(0,0,0,0.15)",
-        }}
+        className={`absolute top-0.5 size-4 rounded-full bg-white transition-[left] duration-200 shadow-[0_1px_2px_rgba(0,0,0,0.15)] ${
+          checked ? "left-[18px]" : "left-0.5"
+        }`}
       />
     </button>
   );
@@ -553,53 +396,20 @@ function ToolsPanel({
 
   return (
     <div
-      style={{
-        width: overlay ? 300 : 280,
-        height: "100dvh",
-        borderLeft: overlay ? "none" : "1px solid #e5e5e5",
-        backgroundColor: "#fff",
-        display: "flex",
-        flexDirection: "column",
-        overflow: "hidden",
-        ...(overlay
-          ? {
-              position: "fixed",
-              top: 0,
-              right: 0,
-              zIndex: 1001,
-              animation: "slide-in-right 0.2s ease-out",
-              boxShadow: "-4px 0 20px rgba(0,0,0,0.1)",
-            }
-          : {}),
-      }}
+      className={`h-dvh bg-white flex flex-col overflow-hidden ${
+        overlay
+          ? "w-[300px] fixed top-0 right-0 z-[1001] animate-[slide-in-right_0.2s_ease-out] shadow-[-4px_0_20px_rgba(0,0,0,0.1)]"
+          : "w-[280px] border-l border-neutral-200"
+      }`}
     >
       {/* Header */}
-      <div
-        style={{
-          padding: "1rem 1rem 0.75rem",
-          borderBottom: "1px solid #e5e5e5",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          flexShrink: 0,
-        }}
-      >
-        <span style={{ fontWeight: 600, fontSize: "0.9375rem" }}>Tools</span>
+      <div className="px-4 pt-4 pb-3 border-b border-neutral-200 flex items-center justify-between shrink-0">
+        <span className="font-semibold text-[0.9375rem]">Tools</span>
         {onClose && (
           <button
             type="button"
             onClick={onClose}
-            style={{
-              background: "transparent",
-              border: "none",
-              cursor: "pointer",
-              color: "#666",
-              padding: 4,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              borderRadius: 6,
-            }}
+            className="cursor-pointer text-[#666] p-1 flex items-center justify-center rounded-md"
           >
             <CloseIcon />
           </button>
@@ -607,22 +417,9 @@ function ToolsPanel({
       </div>
 
       {/* Skill list */}
-      <div
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: "0.5rem 0",
-        }}
-      >
+      <div className="flex-1 overflow-y-auto py-2">
         {skills.length === 0 && (
-          <p
-            style={{
-              padding: "1rem",
-              color: "#999",
-              fontSize: "0.8125rem",
-              textAlign: "center",
-            }}
-          >
+          <p className="p-4 text-[#999] text-[0.8125rem] text-center">
             Loading skills...
           </p>
         )}
@@ -632,23 +429,10 @@ function ToolsPanel({
             (op) => (permissions[op.qualifiedName] ?? op.permission) === "deny",
           );
           return (
-            <div key={skillName} style={{ padding: "0.5rem 1rem" }}>
+            <div key={skillName} className="px-4 py-2">
               {/* Skill header + toggle */}
-              <div
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                  marginBottom: "0.5rem",
-                }}
-              >
-                <span
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "0.8125rem",
-                    fontFamily: MONO,
-                  }}
-                >
+              <div className="flex items-center justify-between mb-2">
+                <span className="font-semibold text-[0.8125rem] font-mono">
                   {skillName}
                 </span>
                 <Toggle
@@ -659,34 +443,18 @@ function ToolsPanel({
 
               {/* Operations */}
               <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.375rem",
-                  opacity: disabled ? 0.4 : 1,
-                  transition: "opacity 0.2s",
-                }}
+                className={`flex flex-col gap-1.5 transition-opacity duration-200 ${
+                  disabled ? "opacity-40" : ""
+                }`}
               >
                 {ops.map((op) => (
                   <div
                     key={op.qualifiedName}
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "space-between",
-                      gap: "0.5rem",
-                    }}
+                    className="flex items-center justify-between gap-2"
                   >
-                    <div style={{ minWidth: 0 }}>
+                    <div className="min-w-0">
                       <div
-                        style={{
-                          fontSize: "0.75rem",
-                          fontFamily: MONO,
-                          color: "#333",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
+                        className="text-xs font-mono text-[#333] truncate"
                         title={op.description}
                       >
                         {op.operation}
@@ -813,42 +581,19 @@ export default function Chat() {
 
   const showSidePanel = isWide && skills.length > 0;
   const showOverlayPanel = !isWide && toolsPanelOpen && skills.length > 0;
+  const sendDisabled = isActive || !input.trim();
 
   // ── Chat area ───────────────────────────────────────────────────────
 
   const chatArea = (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        height: "100dvh",
-        minWidth: 0,
-      }}
-    >
+    <div className="flex flex-col h-dvh min-w-0">
       {/* Top bar (narrow only — settings button) */}
       {!isWide && skills.length > 0 && (
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "flex-end",
-            padding: "0.5rem 0.75rem 0",
-            flexShrink: 0,
-          }}
-        >
+        <div className="flex justify-end px-3 pt-2 shrink-0">
           <button
             type="button"
             onClick={() => setToolsPanelOpen(true)}
-            style={{
-              background: "transparent",
-              border: "1px solid #e5e5e5",
-              borderRadius: 8,
-              cursor: "pointer",
-              color: "#666",
-              padding: "6px 8px",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
+            className="border border-neutral-200 rounded-lg cursor-pointer text-[#666] px-2 py-1.5 flex items-center justify-center"
           >
             <SettingsIcon />
           </button>
@@ -858,42 +603,16 @@ export default function Chat() {
       {/* Messages */}
       <div
         ref={scrollRef}
-        style={{
-          flex: 1,
-          overflowY: "auto",
-          padding: "1.5rem 1rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1.5rem",
-        }}
+        className="flex-1 overflow-y-auto px-4 py-6 flex flex-col gap-6"
       >
         <div
-          style={{
-            maxWidth: 768,
-            width: "100%",
-            margin: "0 auto",
-            display: "flex",
-            flexDirection: "column",
-            gap: "1.5rem",
-            flex: messages.length === 0 ? 1 : undefined,
-          }}
+          className={`max-w-3xl w-full mx-auto flex flex-col gap-6 ${
+            messages.length === 0 ? "flex-1" : ""
+          }`}
         >
           {messages.length === 0 && (
-            <div
-              style={{
-                flex: 1,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "1.375rem",
-                  fontWeight: 600,
-                  color: "#0d0d0d",
-                }}
-              >
+            <div className="flex-1 flex items-center justify-center">
+              <span className="text-[1.375rem] font-semibold text-[#0d0d0d]">
                 crag
               </span>
             </div>
@@ -905,20 +624,14 @@ export default function Chat() {
             return (
               <div
                 key={message.id}
-                style={{
-                  display: "flex",
-                  justifyContent: isUser ? "flex-end" : "flex-start",
-                }}
+                className={`flex ${isUser ? "justify-end" : "justify-start"}`}
               >
                 <div
-                  style={{
-                    maxWidth: isUser ? "75%" : "100%",
-                    padding: isUser ? "0.625rem 1rem" : "0",
-                    borderRadius: isUser ? 20 : 0,
-                    backgroundColor: isUser ? "#f4f4f4" : "transparent",
-                    lineHeight: 1.7,
-                    fontSize: "0.9375rem",
-                  }}
+                  className={`leading-[1.7] text-[0.9375rem] ${
+                    isUser
+                      ? "max-w-[75%] px-4 py-2.5 rounded-[20px] bg-[#f4f4f4]"
+                      : "max-w-full"
+                  }`}
                 >
                   {message.parts.map((part, i) => {
                     if (part.type === "text") {
@@ -926,11 +639,9 @@ export default function Chat() {
                         return (
                           <p
                             key={i}
-                            style={{
-                              whiteSpace: "pre-wrap",
-                              margin: i === 0 ? 0 : "0.75rem 0 0",
-                              wordBreak: "break-word",
-                            }}
+                            className={`whitespace-pre-wrap break-words ${
+                              i === 0 ? "" : "mt-3"
+                            }`}
                           >
                             {part.text}
                           </p>
@@ -983,26 +694,8 @@ export default function Chat() {
       </div>
 
       {/* Input */}
-      <div
-        style={{
-          padding: "0 1rem 1.5rem",
-          flexShrink: 0,
-          maxWidth: 768 + 32,
-          width: "100%",
-          margin: "0 auto",
-        }}
-      >
-        <div
-          style={{
-            position: "relative",
-            border: "1px solid #d9d9e3",
-            borderRadius: 24,
-            backgroundColor: "#f4f4f4",
-            display: "flex",
-            alignItems: "flex-end",
-            padding: "0.375rem 0.5rem 0.375rem 0.75rem",
-          }}
-        >
+      <div className="px-4 pb-6 shrink-0 max-w-[800px] w-full mx-auto">
+        <div className="relative border border-[#d9d9e3] rounded-3xl bg-[#f4f4f4] flex items-end py-1.5 pr-2 pl-3">
           <textarea
             ref={textareaRef}
             value={input}
@@ -1019,52 +712,22 @@ export default function Chat() {
             disabled={isActive}
             placeholder="Message crag..."
             rows={1}
-            style={{
-              flex: 1,
-              border: "none",
-              outline: "none",
-              resize: "none",
-              fontSize: "0.9375rem",
-              lineHeight: 1.5,
-              padding: "0.375rem 0.5rem",
-              backgroundColor: "transparent",
-              fontFamily: "inherit",
-              color: "#0d0d0d",
-              maxHeight: 200,
-            }}
+            className="flex-1 border-none outline-none resize-none text-[0.9375rem] leading-normal px-2 py-1.5 bg-transparent text-[#0d0d0d] max-h-[200px]"
           />
           <button
             type="button"
             onClick={handleSubmit}
-            disabled={isActive || !input.trim()}
-            style={{
-              width: 32,
-              height: 32,
-              borderRadius: "50%",
-              border: "none",
-              backgroundColor:
-                isActive || !input.trim() ? "#d9d9e3" : "#0d0d0d",
-              color: isActive || !input.trim() ? "#a1a1aa" : "#fff",
-              cursor: isActive || !input.trim() ? "default" : "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              flexShrink: 0,
-              transition: "background-color 0.15s",
-              marginBottom: 2,
-            }}
+            disabled={sendDisabled}
+            className={`size-8 rounded-full flex items-center justify-center shrink-0 transition-colors duration-150 mb-0.5 ${
+              sendDisabled
+                ? "bg-[#d9d9e3] text-[#a1a1aa] cursor-default"
+                : "bg-[#0d0d0d] text-white cursor-pointer"
+            }`}
           >
             <SendIcon />
           </button>
         </div>
-        <p
-          style={{
-            textAlign: "center",
-            fontSize: "0.75rem",
-            color: "#9a9a9a",
-            margin: "0.75rem 0 0",
-          }}
-        >
+        <p className="text-center text-xs text-[#9a9a9a] mt-3">
           crag can make mistakes. Verify important information.
         </p>
       </div>
@@ -1076,12 +739,9 @@ export default function Chat() {
   return (
     <>
       <div
-        style={{
-          display: showSidePanel ? "grid" : "flex",
-          gridTemplateColumns: showSidePanel ? "1fr 280px" : undefined,
-          flexDirection: showSidePanel ? undefined : "column",
-          height: "100dvh",
-        }}
+        className={`h-dvh ${
+          showSidePanel ? "grid grid-cols-[1fr_280px]" : "flex flex-col"
+        }`}
       >
         {chatArea}
         {showSidePanel && (
@@ -1103,13 +763,7 @@ export default function Chat() {
             onKeyDown={(e) => {
               if (e.key === "Escape") setToolsPanelOpen(false);
             }}
-            style={{
-              position: "fixed",
-              inset: 0,
-              backgroundColor: "rgba(0, 0, 0, 0.3)",
-              zIndex: 1000,
-              animation: "fade-in 0.2s ease-out",
-            }}
+            className="fixed inset-0 bg-black/30 z-[1000] animate-[fade-in_0.2s_ease-out]"
           />
           <ToolsPanel
             skills={skills}

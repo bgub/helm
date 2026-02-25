@@ -11,7 +11,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body className="h-dvh overflow-hidden bg-white text-[#0d0d0d] antialiased">
+        {children}
+      </body>
     </html>
   );
 }
