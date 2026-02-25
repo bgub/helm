@@ -59,3 +59,7 @@ agent.vercel.dns.create(...)  // -> { id: string, type: "A", ... }
 - `pnpm lint` — lint and format check
 - `pnpm test` — run tests with coverage
 - `pnpm build` — build with tsdown
+
+## Dev workflow
+
+- The user runs `pnpm dev` in a separate terminal. Don't run build/dev commands to verify changes — just make the edits.
