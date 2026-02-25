@@ -2,6 +2,8 @@
 
 import { useChat } from "@ai-sdk/react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { codeToHtml } from "shiki";
+import { Streamdown } from "streamdown";
 
 type Permission = "allow" | "ask" | "deny";
 
@@ -90,6 +92,45 @@ function formatCode(input: unknown): string {
     return (input as { code: string }).code;
   }
   return JSON.stringify(input, null, 2);
+}
+
+function HighlightedCode({ code: source }: { code: string }) {
+  const [html, setHtml] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    codeToHtml(source, {
+      lang: "ts",
+      theme: "github-light",
+      structure: "inline",
+    }).then((result) => {
+      if (!cancelled) setHtml(result);
+    });
+    return () => { cancelled = true; };
+  }, [source]);
+
+  return (
+    <pre
+      style={{
+        margin: 0,
+        padding: "0.75rem 0.875rem",
+        background: "#f8f8f8",
+        overflow: "auto",
+        fontSize: "0.75rem",
+        lineHeight: 1.6,
+        fontFamily: MONO,
+      }}
+    >
+      {html ? (
+        <code
+          // biome-ignore lint: innerHTML is from shiki, not user input
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
+      ) : (
+        source
+      )}
+    </pre>
+  );
 }
 
 const PERM_COLORS: Record<Permission, string> = {
@@ -188,12 +229,135 @@ function ToolCall({
     output !== null &&
     "error" in output;
   const isWaiting = !isDone && pendingApproval !== null;
-  const hasCode =
+  const isExecute =
     name === "execute" &&
     typeof input === "object" &&
     input !== null &&
     "code" in input;
 
+  const statusDot = (
+    <span
+      style={{
+        width: 8,
+        height: 8,
+        borderRadius: "50%",
+        background: isDone ? (isError ? "#ef4444" : "#10a37f") : "#f59e0b",
+        flexShrink: 0,
+      }}
+    />
+  );
+
+  const resultContent = isDone
+    ? JSON.stringify(output, null, 2)
+    : isWaiting
+      ? "Awaiting approval..."
+      : state === "input-available"
+        ? "Running..."
+        : "Calling...";
+
+  const resultToggle = (
+    <button
+      type="button"
+      onClick={() => setCollapsed(!collapsed)}
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: "0.5rem",
+        width: "100%",
+        padding: "0.5rem 0.875rem",
+        background: "transparent",
+        border: "none",
+        borderTop: "1px solid #e5e5e5",
+        cursor: "pointer",
+        fontFamily: "inherit",
+        fontSize: "0.75rem",
+        textAlign: "left",
+        color: "#999",
+      }}
+    >
+      <span>Result</span>
+      <span
+        style={{
+          marginLeft: "auto",
+          transition: "transform 0.2s",
+          transform: collapsed ? "rotate(0deg)" : "rotate(180deg)",
+          display: "inline-block",
+        }}
+      >
+        &#x25BE;
+      </span>
+    </button>
+  );
+
+  const resultBlock = (
+    <pre
+      style={{
+        margin: 0,
+        padding: "0.75rem 0.875rem",
+        background: "#fafafa",
+        borderTop: "1px solid #e5e5e5",
+        overflow: "auto",
+        fontSize: "0.75rem",
+        lineHeight: 1.6,
+        fontFamily: MONO,
+        color: isError ? "#ef4444" : undefined,
+      }}
+    >
+      {resultContent}
+    </pre>
+  );
+
+  if (isExecute) {
+    return (
+      <div
+        style={{
+          margin: "0.5rem 0",
+          border: `1px solid ${isWaiting ? "#fbbf24" : "#e5e5e5"}`,
+          borderRadius: 12,
+          overflow: "hidden",
+          fontSize: "0.8125rem",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "0.5rem",
+            padding: "0.625rem 0.875rem",
+            fontSize: "0.8125rem",
+            color: "#0d0d0d",
+          }}
+        >
+          {statusDot}
+          <span style={{ fontWeight: 600, fontFamily: MONO }}>execute</span>
+          {isWaiting && (
+            <span
+              style={{
+                fontSize: "0.6875rem",
+                color: "#92400e",
+                fontWeight: 500,
+              }}
+            >
+              Awaiting approval
+            </span>
+          )}
+        </div>
+        <div style={{ borderTop: "1px solid #e5e5e5" }}>
+          <HighlightedCode code={formatCode(input)} />
+        </div>
+        {isWaiting && (
+          <ApprovalBanner
+            approval={pendingApproval}
+            onRespond={onApprovalResponse}
+          />
+        )}
+        {resultToggle}
+        {!collapsed && resultBlock}
+      </div>
+    );
+  }
+
+  // Search and other tool calls: fully collapsible (current behavior)
   return (
     <div
       style={{
@@ -222,15 +386,7 @@ function ToolCall({
           color: "#0d0d0d",
         }}
       >
-        <span
-          style={{
-            width: 8,
-            height: 8,
-            borderRadius: "50%",
-            background: isDone ? (isError ? "#ef4444" : "#10a37f") : "#f59e0b",
-            flexShrink: 0,
-          }}
-        />
+        {statusDot}
         <span style={{ fontWeight: 600, fontFamily: MONO }}>
           {isWaiting ? pendingApproval.operation : name}
         </span>
@@ -269,46 +425,7 @@ function ToolCall({
           onRespond={onApprovalResponse}
         />
       )}
-      {!collapsed && (
-        <div style={{ borderTop: "1px solid #e5e5e5" }}>
-          {hasCode && (
-            <pre
-              style={{
-                margin: 0,
-                padding: "0.75rem 0.875rem",
-                background: "#f8f8f8",
-                overflow: "auto",
-                fontSize: "0.75rem",
-                lineHeight: 1.6,
-                fontFamily: MONO,
-              }}
-            >
-              {formatCode(input)}
-            </pre>
-          )}
-          <pre
-            style={{
-              margin: 0,
-              padding: "0.75rem 0.875rem",
-              background: "#fafafa",
-              borderTop: hasCode ? "1px solid #e5e5e5" : undefined,
-              overflow: "auto",
-              fontSize: "0.75rem",
-              lineHeight: 1.6,
-              fontFamily: MONO,
-              color: isError ? "#ef4444" : undefined,
-            }}
-          >
-            {isDone
-              ? JSON.stringify(output, null, 2)
-              : isWaiting
-                ? "Awaiting approval..."
-                : state === "input-available"
-                  ? "Running..."
-                  : "Calling..."}
-          </pre>
-        </div>
-      )}
+      {!collapsed && resultBlock}
     </div>
   );
 }
@@ -817,8 +934,10 @@ export default function Chat() {
             </div>
           )}
 
-          {messages.map((message) => {
+          {messages.map((message, mi) => {
             const isUser = message.role === "user";
+            const isLastAssistant =
+              !isUser && mi === messages.length - 1;
             return (
               <div
                 key={message.id}
@@ -839,17 +958,28 @@ export default function Chat() {
                 >
                   {message.parts.map((part, i) => {
                     if (part.type === "text") {
+                      if (isUser) {
+                        return (
+                          <p
+                            key={i}
+                            style={{
+                              whiteSpace: "pre-wrap",
+                              margin: i === 0 ? 0 : "0.75rem 0 0",
+                              wordBreak: "break-word",
+                            }}
+                          >
+                            {part.text}
+                          </p>
+                        );
+                      }
                       return (
-                        <p
+                        <Streamdown
                           key={i}
-                          style={{
-                            whiteSpace: "pre-wrap",
-                            margin: i === 0 ? 0 : "0.75rem 0 0",
-                            wordBreak: "break-word",
-                          }}
+                          animated
+                          isAnimating={isLastAssistant && isActive}
                         >
                           {part.text}
-                        </p>
+                        </Streamdown>
                       );
                     }
                     if (
