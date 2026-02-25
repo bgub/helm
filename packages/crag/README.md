@@ -81,6 +81,7 @@ const weather = defineSkill({
   operations: {
     forecast: {
       description: "Get the forecast for a city",
+      signature: "(city: string) => Promise<{ temp: number; sky: string }>",
       defaultPermission: "allow",
       tags: ["weather", "read"],
       handler: async (city: string): Promise<{ temp: number; sky: string }> => {
@@ -128,10 +129,15 @@ Agents can discover operations without knowing what's available upfront:
 
 ```ts
 const results = agent.search("file read");
-// [{ qualifiedName: "fs.read", description: "Read a file...", ... }]
+// [{
+//   qualifiedName: "fs.read",
+//   description: "Read a file and return its content as a string",
+//   signature: "(path: string) => Promise<{ content: string }>",
+//   ...
+// }]
 
-// Then call dynamically:
-await agent.call("fs.read", "./package.json");
+// The agent now knows exactly what to call:
+const { content } = await agent.fs.read("./package.json");
 ```
 
 ## Project structure

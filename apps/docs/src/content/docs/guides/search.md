@@ -17,12 +17,13 @@ Each result is a `SearchResult` object:
 
 ```ts
 interface SearchResult {
-  skill: string;          // e.g. "fs"
-  operation: string;      // e.g. "read"
-  qualifiedName: string;  // e.g. "fs.read"
-  description: string;    // operation description
-  tags: string[];         // operation tags
-  permission: Permission; // resolved permission level
+  skill: string;              // e.g. "fs"
+  operation: string;          // e.g. "read"
+  qualifiedName: string;      // e.g. "fs.read"
+  description: string;        // operation description
+  signature?: string;         // call signature, e.g. "(path: string) => Promise<{ content: string }>"
+  tags: string[];             // operation tags
+  permission: Permission;     // resolved permission level
 }
 ```
 

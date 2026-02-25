@@ -62,6 +62,7 @@ export function search(
         operation: opName,
         qualifiedName,
         description: opDef.description,
+        signature: opDef.signature,
         tags: opDef.tags ?? [],
         permission,
       });

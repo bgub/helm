@@ -44,6 +44,7 @@ Each operation in the `operations` map has the following fields:
 |-------|------|----------|-------------|
 | `description` | `string` | Yes | Human-readable description, used for search |
 | `handler` | `(...args) => any` | Yes | The function that runs when the operation is called |
+| `signature` | `string` | No | Call signature shown in search results, e.g. `"(path: string) => Promise<void>"` |
 | `defaultPermission` | `"allow" \| "ask" \| "deny"` | No | Default permission level (falls back to global default) |
 | `tags` | `string[]` | No | Additional keywords for search discovery |
 

@@ -7,6 +7,7 @@ export interface OperationDef<
   H extends (...args: any[]) => any = (...args: any[]) => any,
 > {
   description: string;
+  signature?: string;
   tags?: string[];
   defaultPermission?: Permission;
   handler: H;
@@ -56,6 +57,7 @@ export interface SearchResult {
   operation: string;
   qualifiedName: string;
   description: string;
+  signature?: string;
   tags: string[];
   permission: Permission;
 }

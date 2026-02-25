@@ -125,6 +125,7 @@ interface CragOptions {
 ```ts
 interface OperationDef<H extends (...args: any[]) => any> {
   description: string;
+  signature?: string;
   tags?: string[];
   defaultPermission?: Permission;
   handler: H;
@@ -159,6 +160,7 @@ interface SearchResult {
   operation: string;
   qualifiedName: string;
   description: string;
+  signature?: string;
   tags: string[];
   permission: Permission;
 }

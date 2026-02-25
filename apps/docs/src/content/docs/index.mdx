@@ -17,7 +17,12 @@ hero:
 import { Code } from "@astrojs/starlight/components";
 
 export const search = `const results = agent.search("read file");
-// [{ qualifiedName: "fs.read", description: "Read a file...", ... }]
+// [{
+//   qualifiedName: "fs.read",
+//   description: "Read a file and return its content as a string",
+//   signature: "(path: string) => Promise<{ content: string }>",
+//   ...
+// }]
 
 const { content } = await agent.fs.read("./package.json");`;
 
@@ -44,6 +49,7 @@ export const skill = `const weather = defineSkill({
   operations: {
     forecast: {
       description: "Get the forecast for a city",
+      signature: "(city: string) => Promise<{ temp: number; sky: string }>",
       defaultPermission: "allow",
       tags: ["weather", "read"],
       handler: async (city: string): Promise<{ temp: number; sky: string }> => {

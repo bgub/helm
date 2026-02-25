@@ -97,4 +97,28 @@ describe("search", () => {
     const results = search("read", registry, {}, "ask");
     expect(results[0].qualifiedName).toBe("fs.read");
   });
+
+  it("passes signature through to search results", () => {
+    const skillWithSig: Skill = {
+      name: "math",
+      description: "Math operations",
+      operations: {
+        add: {
+          description: "Add two numbers",
+          signature: "(a: number, b: number) => number",
+          handler: () => {},
+        },
+        sub: {
+          description: "Subtract two numbers",
+          handler: () => {},
+        },
+      },
+    };
+    const reg = makeRegistry([skillWithSig]);
+    const results = search("math", reg, {}, "ask");
+    const add = results.find((r) => r.operation === "add");
+    const sub = results.find((r) => r.operation === "sub");
+    expect(add?.signature).toBe("(a: number, b: number) => number");
+    expect(sub?.signature).toBeUndefined();
+  });
 });

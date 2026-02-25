@@ -16,6 +16,7 @@ export const fs = () =>
     operations: {
       read: {
         description: "Read a file and return its content as a string",
+        signature: "(path: string) => Promise<{ content: string }>",
         defaultPermission: "allow" as const,
         tags: ["file", "read"],
         handler: async (path: string): Promise<{ content: string }> => {
@@ -25,6 +26,7 @@ export const fs = () =>
       },
       write: {
         description: "Write content to a file",
+        signature: "(path: string, content: string) => Promise<void>",
         defaultPermission: "ask" as const,
         tags: ["file", "write"],
         handler: async (path: string, content: string): Promise<void> => {
@@ -33,6 +35,8 @@ export const fs = () =>
       },
       list: {
         description: "List entries in a directory",
+        signature:
+          "(path: string, opts?: { glob?: string }) => Promise<{ entries: { name: string; path: string; isFile: boolean; isDirectory: boolean }[] }>",
         defaultPermission: "allow" as const,
         tags: ["directory", "list"],
         handler: async (
@@ -59,6 +63,7 @@ export const fs = () =>
       },
       exists: {
         description: "Check whether a file or directory exists",
+        signature: "(path: string) => Promise<boolean>",
         defaultPermission: "allow" as const,
         tags: ["file", "check"],
         handler: async (path: string): Promise<boolean> => {
@@ -72,6 +77,7 @@ export const fs = () =>
       },
       remove: {
         description: "Remove a file or directory",
+        signature: "(path: string) => Promise<void>",
         defaultPermission: "ask" as const,
         tags: ["file", "delete"],
         handler: async (path: string): Promise<void> => {
