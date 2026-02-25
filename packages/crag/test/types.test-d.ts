@@ -94,6 +94,9 @@ describe("CragInstance type inference", () => {
         opts?: { glob?: string },
       ) => Promise<{ entries: DirEntry[] }>
     >();
+    expectTypeOf(agent.fs.mkdir).toEqualTypeOf<
+      (path: string) => Promise<void>
+    >();
     expectTypeOf(agent.fs.exists).toEqualTypeOf<
       (path: string) => Promise<boolean>
     >();

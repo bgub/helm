@@ -12,23 +12,24 @@ export interface DirEntry {
 export const fs = () =>
   defineSkill({
     name: "fs",
-    description: "File system operations — read, write, list, check, remove",
+    description:
+      "File system operations — read, write, list, mkdir, check, remove",
     operations: {
       read: {
         description: "Read a file and return its content as a string",
         signature: "(path: string) => Promise<{ content: string }>",
         defaultPermission: "allow" as const,
-        tags: ["file", "read"],
+        tags: ["file", "read", "cat", "open", "content", "text", "load"],
         handler: async (path: string): Promise<{ content: string }> => {
           const content = await nodeFs.readFile(path, "utf-8");
           return { content };
         },
       },
       write: {
-        description: "Write content to a file",
+        description: "Write content to a file, creating it if it doesn't exist",
         signature: "(path: string, content: string) => Promise<void>",
         defaultPermission: "ask" as const,
-        tags: ["file", "write"],
+        tags: ["file", "write", "save", "create", "overwrite", "put", "output"],
         handler: async (path: string, content: string): Promise<void> => {
           await nodeFs.writeFile(path, content, "utf-8");
         },
@@ -38,7 +39,7 @@ export const fs = () =>
         signature:
           "(path: string, opts?: { glob?: string }) => Promise<{ entries: { name: string; path: string; isFile: boolean; isDirectory: boolean }[] }>",
         defaultPermission: "allow" as const,
-        tags: ["directory", "list"],
+        tags: ["directory", "list", "ls", "dir", "entries", "files", "browse"],
         handler: async (
           path: string,
           opts?: { glob?: string },
@@ -61,11 +62,28 @@ export const fs = () =>
           return { entries };
         },
       },
+      mkdir: {
+        description: "Create a directory, including any parent directories",
+        signature: "(path: string) => Promise<void>",
+        defaultPermission: "ask" as const,
+        tags: [
+          "directory",
+          "create",
+          "mkdir",
+          "folder",
+          "make",
+          "new",
+          "mkdirp",
+        ],
+        handler: async (path: string): Promise<void> => {
+          await nodeFs.mkdir(path, { recursive: true });
+        },
+      },
       exists: {
         description: "Check whether a file or directory exists",
         signature: "(path: string) => Promise<boolean>",
         defaultPermission: "allow" as const,
-        tags: ["file", "check"],
+        tags: ["file", "check", "exists", "stat", "test", "find", "access"],
         handler: async (path: string): Promise<boolean> => {
           try {
             await nodeFs.access(path);
@@ -76,10 +94,10 @@ export const fs = () =>
         },
       },
       remove: {
-        description: "Remove a file or directory",
+        description: "Remove a file or directory recursively",
         signature: "(path: string) => Promise<void>",
         defaultPermission: "ask" as const,
-        tags: ["file", "delete"],
+        tags: ["file", "delete", "remove", "rm", "unlink", "destroy", "clean"],
         handler: async (path: string): Promise<void> => {
           await nodeFs.rm(path, { recursive: true });
         },

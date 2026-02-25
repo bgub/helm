@@ -60,6 +60,20 @@ describe("fs skill", () => {
     expect(result.entries[0].name).toBe("a.txt");
   });
 
+  it("creates a directory recursively", async () => {
+    const dirPath = nodePath.join(tmpDir, "a", "b", "c");
+    await agent().fs.mkdir(dirPath);
+
+    const stat = await nodeFs.stat(dirPath);
+    expect(stat.isDirectory()).toBe(true);
+  });
+
+  it("is a no-op if directory already exists", async () => {
+    const dirPath = nodePath.join(tmpDir, "existing");
+    await nodeFs.mkdir(dirPath);
+    await expect(agent().fs.mkdir(dirPath)).resolves.toBeUndefined();
+  });
+
   it("checks file existence", async () => {
     const filePath = nodePath.join(tmpDir, "exists.txt");
     await nodeFs.writeFile(filePath, "yes");
