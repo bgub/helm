@@ -630,7 +630,7 @@ export default function Chat() {
                   className={`leading-[1.7] text-[0.9375rem] ${
                     isUser
                       ? "max-w-[75%] px-4 py-2.5 rounded-[20px] bg-[#f4f4f4]"
-                      : "max-w-full"
+                      : "w-full"
                   }`}
                 >
                   {message.parts.map((part, i) => {
@@ -709,7 +709,6 @@ export default function Chat() {
                 handleSubmit();
               }
             }}
-            disabled={isActive}
             placeholder="Message crag..."
             rows={1}
             className="flex-1 border-none outline-none resize-none text-[0.9375rem] leading-normal px-2 py-1.5 bg-transparent text-[#0d0d0d] max-h-[200px]"
