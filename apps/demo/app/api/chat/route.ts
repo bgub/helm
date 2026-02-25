@@ -1,4 +1,4 @@
-import vm from "node:vm";
+import "../../../lib/ses-init";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -22,6 +22,11 @@ export async function POST(req: Request) {
 
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
+      // Tracks the current tool call ID so onPermissionRequest can tie
+      // approval requests to the specific execute call that triggered them.
+      // Safe because tool calls execute sequentially.
+      let activeToolCallId = "";
+
       const agent = createCrag({
         permissions: permissions ?? {},
         defaultPermission: "allow",
@@ -32,7 +37,7 @@ export async function POST(req: Request) {
           );
           writer.write({
             type: "data-approval-request",
-            data: { id, operation, args },
+            data: { id, operation, args, toolCallId: activeToolCallId },
           });
           return approved;
         },
@@ -98,17 +103,21 @@ Be concise in your responses.`,
                   "JavaScript code to execute. `agent` is available in scope. Use `await` and `return`.",
                 ),
             }),
-            execute: async ({ code }) => {
-              const sandbox = vm.createContext({
-                agent,
-                console: {
-                  log: (...a: unknown[]) => a,
-                  error: (...a: unknown[]) => a,
+            execute: async ({ code }, { toolCallId }) => {
+              activeToolCallId = toolCallId;
+              const compartment = new Compartment({
+                globals: {
+                  agent,
+                  console: {
+                    log: (...a: unknown[]) => a,
+                    error: (...a: unknown[]) => a,
+                  },
                 },
+                __options__: true,
               });
               const wrapped = `(async () => {\n${code}\n})()`;
               try {
-                const result = await vm.runInNewContext(wrapped, sandbox);
+                const result = await compartment.evaluate(wrapped);
                 return result ?? { ok: true };
               } catch (e) {
                 return { error: e instanceof Error ? e.message : String(e) };
