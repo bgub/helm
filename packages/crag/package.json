@@ -1,0 +1,46 @@
+{
+  "name": "crag",
+  "version": "0.1.0",
+  "description": "A typed TypeScript framework for AI agents — call typed functions instead of parsing CLI stdout",
+  "keywords": [
+    "ai",
+    "agent",
+    "tools",
+    "typed",
+    "typescript"
+  ],
+  "homepage": "https://github.com/bgub/crag",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "types": "./dist/index.d.ts",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsdown",
+    "dev": "tsdown --watch",
+    "test": "vitest run --coverage"
+  },
+  "author": "Ben Gubler <nebrelbug@gmail.com>",
+  "repository": "github:bgub/crag",
+  "bugs": {
+    "url": "https://github.com/bgub/crag/issues"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.1",
+    "@vitest/coverage-istanbul": "3.2.4",
+    "tsdown": "^0.15.0",
+    "typescript": "^5.9.2",
+    "vitest": "^3.2.4"
+  }
+}

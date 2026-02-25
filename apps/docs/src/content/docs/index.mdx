@@ -1,0 +1,82 @@
+---
+title: crag
+description: A typed TypeScript framework for AI agents — call typed functions instead of parsing CLI stdout.
+template: splash
+hero:
+  tagline: A typed TypeScript framework for AI agents. Call typed functions instead of parsing CLI stdout.
+  actions:
+    - text: Get Started
+      link: /getting-started/introduction/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/bgub/crag
+      icon: external
+      variant: minimal
+---
+
+import { Code } from "@astrojs/starlight/components";
+
+export const search = `const results = agent.search("read file");
+// [{ qualifiedName: "fs.read", description: "Read a file...", ... }]
+
+const { content } = await agent.fs.read("./package.json");`;
+
+export const permissions = `import { createCrag, fs } from "crag";
+
+const agent = createCrag({
+  permissions: {
+    "fs.read": "allow",   // runs immediately
+    "fs.*": "ask",         // prompts via callback
+    "dangerous.*": "deny", // throws PermissionDeniedError
+  },
+  onPermissionRequest: async (operation, args) => {
+    console.log(\`\${operation} requested with\`, args);
+    return true; // or false to deny
+  },
+}).use(fs());
+
+const { content } = await agent.fs.read("./package.json");
+const { entries } = await agent.fs.list("./src", { glob: "*.ts" });`;
+
+export const skill = `const weather = defineSkill({
+  name: "weather",
+  description: "Weather forecast operations",
+  operations: {
+    forecast: {
+      description: "Get the forecast for a city",
+      defaultPermission: "allow",
+      tags: ["weather", "read"],
+      handler: async (city: string): Promise<{ temp: number; sky: string }> => {
+        return fetchWeather(city);
+      },
+    },
+  },
+});
+
+const agent = createCrag().use(fs()).use(weather);
+const { temp, sky } = await agent.weather.forecast("Seattle");`;
+
+<div class="not-content grid grid-cols-1 md:grid-cols-2 gap-4 max-w-full">
+<div class="min-w-0 overflow-hidden space-y-3">
+
+### Search the registry
+
+Agents discover operations without loading the full skill set into context.
+
+<Code code={search} lang="ts" title="search" />
+
+</div>
+<div class="min-w-0 overflow-hidden space-y-3">
+
+### Permissions are first-class
+
+Every operation has a permission level — no more "allow bash: yes/no."
+
+<Code code={permissions} lang="ts" title="index.ts" />
+
+</div>
+</div>
+
+## Define custom skills
+
+<Code code={skill} lang="ts" title="weather.ts" />
