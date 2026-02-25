@@ -1,0 +1,23 @@
+{
+  "name": "@crag/demo",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build"
+  },
+  "dependencies": {
+    "@ai-sdk/react": "^3",
+    "ai": "^6",
+    "crag": "workspace:*",
+    "next": "^15",
+    "react": "^19",
+    "react-dom": "^19",
+    "zod": "^3"
+  },
+  "devDependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5.9.2"
+  }
+}

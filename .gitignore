@@ -11,6 +11,8 @@ compiled
 .turbo
 
 dist
+.next
+.env.local
 
 package-lock.json
 yarn.lock
