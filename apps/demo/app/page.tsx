@@ -106,7 +106,9 @@ function HighlightedCode({ code: source }: { code: string }) {
     }).then((result) => {
       if (!cancelled) setHtml(result);
     });
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [source]);
 
   return (
@@ -147,6 +149,7 @@ interface PendingApprovalInfo {
   id: string;
   operation: string;
   args: unknown[];
+  toolCallId: string;
 }
 
 function ApprovalBanner({
@@ -547,7 +550,6 @@ function Toggle({
 function ToolsPanel({
   skills,
   permissions,
-  disabledSkills,
   onPermissionChange,
   onSkillToggle,
   onClose,
@@ -555,9 +557,8 @@ function ToolsPanel({
 }: {
   skills: SkillInfo[];
   permissions: Record<string, Permission>;
-  disabledSkills: Set<string>;
   onPermissionChange: (qualifiedName: string, perm: Permission) => void;
-  onSkillToggle: (skill: string) => void;
+  onSkillToggle: (skill: string, enabled: boolean) => void;
   onClose?: () => void;
   overlay?: boolean;
 }) {
@@ -648,7 +649,9 @@ function ToolsPanel({
         )}
 
         {[...skillGroups.entries()].map(([skillName, ops]) => {
-          const disabled = disabledSkills.has(skillName);
+          const disabled = ops.every(
+            (op) => (permissions[op.qualifiedName] ?? op.permission) === "deny",
+          );
           return (
             <div key={skillName} style={{ padding: "0.5rem 1rem" }}>
               {/* Skill header + toggle */}
@@ -671,7 +674,7 @@ function ToolsPanel({
                 </span>
                 <Toggle
                   checked={!disabled}
-                  onChange={() => onSkillToggle(skillName)}
+                  onChange={(v) => onSkillToggle(skillName, v)}
                 />
               </div>
 
@@ -738,23 +741,9 @@ export default function Chat() {
   const [permissions, setPermissions] = useState<Record<string, Permission>>(
     {},
   );
-  const [disabledSkills, setDisabledSkills] = useState<Set<string>>(new Set());
   const [toolsPanelOpen, setToolsPanelOpen] = useState(false);
   const [isWide, setIsWide] = useState(false);
-  const [respondedApprovals, setRespondedApprovals] = useState<Set<string>>(
-    new Set(),
-  );
-
-  // Effective permissions: merge disabled-skill denials with individual op permissions
-  const effectivePermissions = useMemo(() => {
-    const result: Record<string, Permission> = { ...permissions };
-    for (const s of skills) {
-      if (disabledSkills.has(s.skill)) {
-        result[s.qualifiedName] = "deny";
-      }
-    }
-    return result;
-  }, [permissions, disabledSkills, skills]);
+  const [lastRespondedId, setLastRespondedId] = useState<string | null>(null);
 
   const { messages, sendMessage, status } = useChat();
 
@@ -768,11 +757,11 @@ export default function Chat() {
       const part = lastMsg.parts[i];
       if (part.type === "data-approval-request") {
         const info = (part as { data: PendingApprovalInfo }).data;
-        if (!respondedApprovals.has(info.id)) return info;
+        return info.id === lastRespondedId ? null : info;
       }
     }
     return null;
-  }, [messages, respondedApprovals]);
+  }, [messages, lastRespondedId]);
 
   // Fetch skills on mount
   useEffect(() => {
@@ -809,10 +798,7 @@ export default function Chat() {
 
   const handleSubmit = () => {
     if (input.trim() && !isActive) {
-      sendMessage(
-        { text: input },
-        { body: { permissions: effectivePermissions } },
-      );
+      sendMessage({ text: input }, { body: { permissions } });
       setInput("");
       if (textareaRef.current) {
         textareaRef.current.style.height = "auto";
@@ -825,20 +811,20 @@ export default function Chat() {
     setPermissions((prev) => ({ ...prev, [qualifiedName]: perm }));
   };
 
-  const handleSkillToggle = (skill: string) => {
-    setDisabledSkills((prev) => {
-      const next = new Set(prev);
-      if (next.has(skill)) {
-        next.delete(skill);
-      } else {
-        next.add(skill);
+  const handleSkillToggle = (skill: string, enabled: boolean) => {
+    setPermissions((prev) => {
+      const next = { ...prev };
+      for (const s of skills) {
+        if (s.skill === skill) {
+          next[s.qualifiedName] = enabled ? s.permission : "deny";
+        }
       }
       return next;
     });
   };
 
   const handleApprovalResponse = async (id: string, approved: boolean) => {
-    setRespondedApprovals((prev) => new Set(prev).add(id));
+    setLastRespondedId(id);
     await fetch("/api/approvals", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -936,8 +922,7 @@ export default function Chat() {
 
           {messages.map((message, mi) => {
             const isUser = message.role === "user";
-            const isLastAssistant =
-              !isUser && mi === messages.length - 1;
+            const isLastAssistant = !isUser && mi === messages.length - 1;
             return (
               <div
                 key={message.id}
@@ -986,9 +971,7 @@ export default function Chat() {
                       part.type === "tool-search" ||
                       part.type === "tool-execute"
                     ) {
-                      const isExecuteInProgress =
-                        part.type === "tool-execute" &&
-                        part.state !== "output-available";
+                      const tcPart = part as { toolCallId?: string };
                       return (
                         <ToolCall
                           key={i}
@@ -997,7 +980,9 @@ export default function Chat() {
                           output={"output" in part ? part.output : null}
                           state={part.state}
                           pendingApproval={
-                            isExecuteInProgress ? pendingApproval : null
+                            pendingApproval?.toolCallId === tcPart.toolCallId
+                              ? pendingApproval
+                              : null
                           }
                           onApprovalResponse={handleApprovalResponse}
                         />
@@ -1124,7 +1109,6 @@ export default function Chat() {
           <ToolsPanel
             skills={skills}
             permissions={permissions}
-            disabledSkills={disabledSkills}
             onPermissionChange={handlePermissionChange}
             onSkillToggle={handleSkillToggle}
           />
@@ -1151,7 +1135,6 @@ export default function Chat() {
           <ToolsPanel
             skills={skills}
             permissions={permissions}
-            disabledSkills={disabledSkills}
             onPermissionChange={handlePermissionChange}
             onSkillToggle={handleSkillToggle}
             onClose={() => setToolsPanelOpen(false)}
