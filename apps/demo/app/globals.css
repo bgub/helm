@@ -1,6 +1,6 @@
 @import "tailwindcss";
-@source "../node_modules/streamdown/dist/*.js";
 @import "streamdown/styles.css";
+@source "../node_modules/streamdown/dist/*.js";
 
 @theme {
   --color-permit: #10a37f;

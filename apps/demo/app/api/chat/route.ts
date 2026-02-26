@@ -8,7 +8,16 @@ import {
   tool,
   type UIMessage,
 } from "ai";
-import { createCrag, edit, fs, git, grep, http, shell, type Permission } from "crag";
+import {
+  createCrag,
+  edit,
+  fs,
+  git,
+  grep,
+  http,
+  type Permission,
+  shell,
+} from "crag";
 import { z } from "zod";
 import { requestApproval } from "../../../lib/approvals";
 import { evaluate } from "../../../lib/sandbox";

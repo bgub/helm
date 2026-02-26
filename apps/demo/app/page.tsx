@@ -22,6 +22,7 @@ interface SkillInfo {
 function SendIcon() {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -40,6 +41,7 @@ function SendIcon() {
 function SettingsIcon() {
   return (
     <svg
+      aria-hidden="true"
       width="18"
       height="18"
       viewBox="0 0 24 24"
@@ -58,6 +60,7 @@ function SettingsIcon() {
 function CloseIcon() {
   return (
     <svg
+      aria-hidden="true"
       width="16"
       height="16"
       viewBox="0 0 24 24"
@@ -527,13 +530,18 @@ export default function Chat() {
     return () => mql.removeEventListener("change", handler);
   }, []);
 
-  // Auto-scroll
+  // Auto-scroll on new messages / new parts
+  const lastMessage = messages[messages.length - 1];
+  const scrollTrigger = lastMessage
+    ? `${lastMessage.id}-${lastMessage.parts.length}`
+    : "";
+  // biome-ignore lint/correctness/useExhaustiveDependencies: scrollTrigger is intentionally derived to trigger scroll
   useEffect(() => {
     const el = scrollRef.current;
     if (el) {
       el.scrollTop = el.scrollHeight;
     }
-  }, [messages]);
+  }, [scrollTrigger]);
 
   const adjustTextarea = useCallback(() => {
     const el = textareaRef.current;
@@ -634,11 +642,12 @@ export default function Chat() {
                   }`}
                 >
                   {message.parts.map((part, i) => {
+                    const key = `${message.id}-${i}`;
                     if (part.type === "text") {
                       if (isUser) {
                         return (
                           <p
-                            key={i}
+                            key={key}
                             className={`whitespace-pre-wrap break-words ${
                               i === 0 ? "" : "mt-3"
                             }`}
@@ -649,7 +658,7 @@ export default function Chat() {
                       }
                       return (
                         <Streamdown
-                          key={i}
+                          key={key}
                           animated
                           isAnimating={isLastAssistant && isActive}
                         >
@@ -664,7 +673,7 @@ export default function Chat() {
                       const tcPart = part as { toolCallId?: string };
                       return (
                         <ToolCall
-                          key={i}
+                          key={key}
                           name={part.type.replace("tool-", "")}
                           input={part.input}
                           output={"output" in part ? part.output : null}
@@ -757,6 +766,7 @@ export default function Chat() {
       {showOverlayPanel && (
         <>
           {/* Backdrop */}
+          {/* biome-ignore lint/a11y/noStaticElementInteractions: backdrop dismiss pattern */}
           <div
             onClick={() => setToolsPanelOpen(false)}
             onKeyDown={(e) => {
