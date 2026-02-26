@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.2.0 (2026-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename package to @bgub/helm
+* initial public API
+
+### Features
+
+* add built-in skills, permissions, search, and MCP surface ([e34cdf7](https://github.com/bgub/helm/commit/e34cdf721a3ff4457ba90f7fefbe24f3961ae359))
+* initial release ([5ebc360](https://github.com/bgub/helm/commit/5ebc360a2657f83048fd4262e1bce430458b0c56))
+* rename package to @bgub/helm ([1bc9a1b](https://github.com/bgub/helm/commit/1bc9a1b23142dc5af96410f4fb36cdf7fdc4e147))
+
+
+### Miscellaneous Chores
+
+* bootstrap release ([26db2d1](https://github.com/bgub/helm/commit/26db2d16eef9074770b46fabc342d31c78dc4ef0))
+* rename remaining crag references to helm, use tui for dev ([846aca2](https://github.com/bgub/helm/commit/846aca25700ace5ca3a0b4bbe85ad8b4d30c551e))
+
 ## 0.1.0 (2026-02-26)
 
 
