@@ -13,11 +13,11 @@
   "type": "module",
   "exports": {
     ".": {
-      "import": "./dist/index.js",
-      "types": "./dist/index.d.ts"
+      "import": "./dist/index.mjs",
+      "types": "./dist/index.d.mts"
     }
   },
-  "types": "./dist/index.d.ts",
+  "types": "./dist/index.d.mts",
   "sideEffects": false,
   "files": [
     "dist"
@@ -37,10 +37,10 @@
     "node": ">=20"
   },
   "devDependencies": {
-    "@types/node": "^22.18.1",
-    "@vitest/coverage-istanbul": "3.2.4",
-    "tsdown": "^0.15.0",
+    "@types/node": "^25.3.0",
+    "@vitest/coverage-istanbul": "4.0.18",
+    "tsdown": "^0.20.3",
     "typescript": "^5.9.2",
-    "vitest": "^3.2.4"
+    "vitest": "^4.0.18"
   }
 }

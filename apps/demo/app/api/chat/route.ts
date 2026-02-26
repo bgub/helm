@@ -8,34 +8,66 @@ import {
   tool,
   type UIMessage,
 } from "ai";
-import { createCrag, fs, type Permission } from "crag";
+import { createCrag, edit, fs, git, grep, http, shell, type Permission } from "crag";
 import { z } from "zod";
 import { requestApproval } from "../../../lib/approvals";
 import { evaluate } from "../../../lib/sandbox";
 
-const SYSTEM_PROMPT = `You are a helpful assistant with access to the local filesystem through crag, a typed tool framework.
+const SYSTEM_PROMPT = `You are a helpful assistant with access to the local system through crag, a typed tool framework.
 
 You have two tools: search and execute.
 
 ## search
-Use search to discover available operations. The search uses keyword matching against operation names, descriptions, and tags. Use short, specific keywords — e.g. "list", "read", "write", "remove", "exists". Do NOT use long natural-language queries; they will return no results.
+Use search to discover available operations. The search uses keyword matching against operation names, descriptions, and tags. Use short, specific keywords — e.g. "list", "read", "write", "git", "grep", "http". Do NOT use long natural-language queries; they will return no results.
 
 ## execute
 Use execute to run JavaScript code with the crag agent API available as \`agent\`.
 
-Write async JS code using the agent API:
-- \`await agent.fs.read(path)\` — read a file
-- \`await agent.fs.list(dir)\` — list a directory
-- \`await agent.fs.write(path, content)\` — write a file
+Write async JS code using the agent API. Available skills:
+
+**fs** — file system:
+- \`await agent.fs.readFile(path)\` — read a file
+- \`await agent.fs.writeFile(path, content)\` — write a file
+- \`await agent.fs.readdir(dir)\` — list a directory
 - \`await agent.fs.mkdir(path)\` — create a directory
-- \`await agent.fs.exists(path)\` — check if a path exists
-- Use \`await\` for all agent calls
-- Return the value you want to show to the user
+- \`await agent.fs.stat(path)\` — get file/dir metadata
+- \`await agent.fs.rm(path)\` — remove a file or directory
+- \`await agent.fs.rename(oldPath, newPath)\` — rename/move
+- \`await agent.fs.cwd()\` — get current working directory
+
+**git** — version control:
+- \`await agent.git.status()\` — repo status
+- \`await agent.git.diff()\` / \`agent.git.diff({ staged: true })\` — file changes
+- \`await agent.git.log({ limit: 5 })\` — commit history
+- \`await agent.git.show(ref, { path })\` — show file at ref
+- \`await agent.git.add(paths)\` — stage files
+- \`await agent.git.commit(message)\` — create commit
+- \`await agent.git.branchList()\` — list branches
+- \`await agent.git.branchCreate(name)\` — create branch
+- \`await agent.git.checkout(ref)\` — switch branch
+
+**grep** — search:
+- \`await agent.grep.search(pattern, { glob, maxResults })\` — search files
+
+**edit** — file editing:
+- \`await agent.edit.replace(path, old, new)\` — replace text
+- \`await agent.edit.insert(path, line, content)\` — insert at line
+- \`await agent.edit.removeLines(path, start, end)\` — remove lines
+- \`await agent.edit.apply(path, edits)\` — batch edits
+
+**shell** — commands:
+- \`await agent.shell.dangerousExec(command)\` — run shell command
+
+**http** — web requests:
+- \`await agent.http.fetch(url, opts)\` — HTTP request
+- \`await agent.http.json(url, opts)\` — fetch and parse JSON
+
+Use \`await\` for all agent calls. Return the value you want to show to the user.
 
 Example:
 \`\`\`js
-const files = await agent.fs.list(".");
-return files;
+const { staged, unstaged, branch } = await agent.git.status();
+return { branch, staged: staged.length, unstaged: unstaged.length };
 \`\`\`
 
 ## Workflow
@@ -75,7 +107,13 @@ export async function POST(req: Request) {
           });
           return approved;
         },
-      }).use(fs());
+      })
+        .use(fs())
+        .use(git())
+        .use(grep())
+        .use(edit())
+        .use(shell())
+        .use(http());
 
       const result = streamText({
         model: gateway("minimax/minimax-m2.5"),
@@ -85,12 +123,12 @@ export async function POST(req: Request) {
         tools: {
           search: tool({
             description:
-              "Search for available crag operations by keyword. Use short keywords like 'list', 'read', 'file'. Returns matching operations with qualifiedName, description, and signature.",
+              "Search for available crag operations by keyword. Use short keywords like 'list', 'read', 'file', 'git', 'grep'. Returns matching operations with qualifiedName, description, and signature.",
             inputSchema: z.object({
               query: z
                 .string()
                 .describe(
-                  "Short keyword to search for, e.g. 'list', 'read', 'write'",
+                  "Short keyword to search for, e.g. 'list', 'read', 'git', 'grep'",
                 ),
             }),
             execute: async ({ query }) => agent.search(query),

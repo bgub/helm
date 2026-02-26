@@ -17,7 +17,7 @@ Every operation resolves to one of three permission levels:
 
 Permissions are resolved using a first-match strategy:
 
-1. **Exact match** in the policy — `"fs.read": "allow"`
+1. **Exact match** in the policy — `"fs.readFile": "allow"`
 2. **Wildcard match** — `"fs.*": "ask"`
 3. **Operation default** — set by the skill author via `defaultPermission`
 4. **Global default** — the `defaultPermission` option passed to `createCrag()` (defaults to `"ask"`)
@@ -25,11 +25,11 @@ Permissions are resolved using a first-match strategy:
 ```ts
 const agent = createCrag({
   permissions: {
-    "fs.read": "allow",     // exact match
-    "fs.*": "ask",          // wildcard
-    "dangerous.*": "deny",  // wildcard deny
+    "fs.readFile": "allow",  // exact match
+    "fs.*": "ask",           // wildcard
+    "shell.*": "deny",       // wildcard deny
   },
-  defaultPermission: "ask", // global fallback
+  defaultPermission: "ask",  // global fallback
 });
 ```
 
@@ -56,7 +56,7 @@ When an operation is denied (either by policy or by the callback), a `Permission
 import { PermissionDeniedError } from "crag";
 
 try {
-  await agent.fs.remove("./important-file.txt");
+  await agent.fs.rm("./important-file.txt");
 } catch (err) {
   if (err instanceof PermissionDeniedError) {
     console.log("Operation was denied:", err.message);

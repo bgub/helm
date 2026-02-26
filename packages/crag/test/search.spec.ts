@@ -38,13 +38,13 @@ const fsSkill: Skill = {
   name: "fs",
   description: "File system operations",
   operations: {
-    read: {
+    readFile: {
       description: "Read a file",
       tags: ["file", "read"],
       defaultPermission: "allow",
       handler: () => {},
     },
-    write: {
+    writeFile: {
       description: "Write a file",
       tags: ["file", "write"],
       defaultPermission: "ask",
@@ -94,8 +94,8 @@ describe("search", () => {
   });
 
   it("ranks exact name match higher than description match", () => {
-    const results = search("read", registry, {}, "ask");
-    expect(results[0].qualifiedName).toBe("fs.read");
+    const results = search("readFile", registry, {}, "ask");
+    expect(results[0].qualifiedName).toBe("fs.readFile");
   });
 
   it("passes signature through to search results", () => {

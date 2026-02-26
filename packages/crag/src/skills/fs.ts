@@ -9,13 +9,21 @@ export interface DirEntry {
   isDirectory: boolean;
 }
 
+export interface StatResult {
+  size: number;
+  isFile: boolean;
+  isDirectory: boolean;
+  modified: string;
+  created: string;
+}
+
 export const fs = () =>
   defineSkill({
     name: "fs",
     description:
-      "File system operations — read, write, list, mkdir, check, remove",
+      "File system operations — readFile, writeFile, readdir, mkdir, stat, rm, rename, cwd",
     operations: {
-      read: {
+      readFile: {
         description: "Read a file and return its content as a string",
         signature: "(path: string) => Promise<{ content: string }>",
         defaultPermission: "allow" as const,
@@ -25,7 +33,7 @@ export const fs = () =>
           return { content };
         },
       },
-      write: {
+      writeFile: {
         description: "Write content to a file, creating it if it doesn't exist",
         signature: "(path: string, content: string) => Promise<void>",
         defaultPermission: "ask" as const,
@@ -34,10 +42,10 @@ export const fs = () =>
           await nodeFs.writeFile(path, content, "utf-8");
         },
       },
-      list: {
+      readdir: {
         description: "List entries in a directory",
         signature:
-          "(path: string, opts?: { glob?: string }) => Promise<{ entries: { name: string; path: string; isFile: boolean; isDirectory: boolean }[] }>",
+          "(path: string, opts?: { glob?: string }) => Promise<{ entries: DirEntry[] }>",
         defaultPermission: "allow" as const,
         tags: ["directory", "list", "ls", "dir", "entries", "files", "browse"],
         handler: async (
@@ -79,27 +87,47 @@ export const fs = () =>
           await nodeFs.mkdir(path, { recursive: true });
         },
       },
-      exists: {
-        description: "Check whether a file or directory exists",
-        signature: "(path: string) => Promise<boolean>",
+      stat: {
+        description: "Get file or directory metadata — size, type, timestamps",
+        signature: "(path: string) => Promise<StatResult>",
         defaultPermission: "allow" as const,
-        tags: ["file", "check", "exists", "stat", "test", "find", "access"],
-        handler: async (path: string): Promise<boolean> => {
-          try {
-            await nodeFs.access(path);
-            return true;
-          } catch {
-            return false;
-          }
+        tags: ["file", "stat", "info", "metadata", "size", "exists", "check"],
+        handler: async (path: string): Promise<StatResult> => {
+          const s = await nodeFs.stat(path);
+          return {
+            size: s.size,
+            isFile: s.isFile(),
+            isDirectory: s.isDirectory(),
+            modified: s.mtime.toISOString(),
+            created: s.birthtime.toISOString(),
+          };
         },
       },
-      remove: {
+      rm: {
         description: "Remove a file or directory recursively",
         signature: "(path: string) => Promise<void>",
         defaultPermission: "ask" as const,
         tags: ["file", "delete", "remove", "rm", "unlink", "destroy", "clean"],
         handler: async (path: string): Promise<void> => {
           await nodeFs.rm(path, { recursive: true });
+        },
+      },
+      rename: {
+        description: "Rename or move a file or directory",
+        signature: "(oldPath: string, newPath: string) => Promise<void>",
+        defaultPermission: "ask" as const,
+        tags: ["file", "rename", "move", "mv"],
+        handler: async (oldPath: string, newPath: string): Promise<void> => {
+          await nodeFs.rename(oldPath, newPath);
+        },
+      },
+      cwd: {
+        description: "Get the current working directory",
+        signature: "() => Promise<string>",
+        defaultPermission: "allow" as const,
+        tags: ["directory", "cwd", "pwd", "path", "current"],
+        handler: async (): Promise<string> => {
+          return process.cwd();
         },
       },
     },

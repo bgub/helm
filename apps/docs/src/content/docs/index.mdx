@@ -18,30 +18,32 @@ import { Code } from "@astrojs/starlight/components";
 
 export const search = `const results = agent.search("read file");
 // [{
-//   qualifiedName: "fs.read",
+//   qualifiedName: "fs.readFile",
 //   description: "Read a file and return its content as a string",
 //   signature: "(path: string) => Promise<{ content: string }>",
 //   ...
 // }]
 
-const { content } = await agent.fs.read("./package.json");`;
+const { content } = await agent.fs.readFile("./package.json");`;
 
-export const permissions = `import { createCrag, fs } from "crag";
+export const permissions = `import { createCrag, fs, git, grep } from "crag";
 
 const agent = createCrag({
   permissions: {
-    "fs.read": "allow",   // runs immediately
-    "fs.*": "ask",         // prompts via callback
-    "dangerous.*": "deny", // throws PermissionDeniedError
+    "fs.readFile": "allow",  // runs immediately
+    "fs.*": "ask",            // prompts via callback
+    "git.*": "allow",         // all git reads allowed
+    "shell.*": "deny",        // no shell access
   },
   onPermissionRequest: async (operation, args) => {
     console.log(\`\${operation} requested with\`, args);
     return true; // or false to deny
   },
-}).use(fs());
+}).use(fs()).use(git()).use(grep());
 
-const { content } = await agent.fs.read("./package.json");
-const { entries } = await agent.fs.list("./src", { glob: "*.ts" });`;
+const { content } = await agent.fs.readFile("./package.json");
+const { staged, branch } = await agent.git.status();
+const { matches } = await agent.grep.search("TODO", { glob: "*.ts" });`;
 
 export const skill = `const weather = defineSkill({
   name: "weather",

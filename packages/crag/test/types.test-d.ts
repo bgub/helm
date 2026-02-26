@@ -1,7 +1,7 @@
 import { describe, expectTypeOf, it } from "vitest";
 import { createCrag } from "../src/create-crag.ts";
 import { defineSkill } from "../src/define-skill.ts";
-import type { DirEntry } from "../src/skills/fs.ts";
+import type { DirEntry, StatResult } from "../src/skills/fs.ts";
 import { fs } from "../src/skills/fs.ts";
 
 describe("defineSkill type inference", () => {
@@ -82,13 +82,13 @@ describe("CragInstance type inference", () => {
   it("types the fs skill correctly", () => {
     const agent = createCrag().use(fs());
 
-    expectTypeOf(agent.fs.read).toEqualTypeOf<
+    expectTypeOf(agent.fs.readFile).toEqualTypeOf<
       (path: string) => Promise<{ content: string }>
     >();
-    expectTypeOf(agent.fs.write).toEqualTypeOf<
+    expectTypeOf(agent.fs.writeFile).toEqualTypeOf<
       (path: string, content: string) => Promise<void>
     >();
-    expectTypeOf(agent.fs.list).toEqualTypeOf<
+    expectTypeOf(agent.fs.readdir).toEqualTypeOf<
       (
         path: string,
         opts?: { glob?: string },
@@ -97,12 +97,14 @@ describe("CragInstance type inference", () => {
     expectTypeOf(agent.fs.mkdir).toEqualTypeOf<
       (path: string) => Promise<void>
     >();
-    expectTypeOf(agent.fs.exists).toEqualTypeOf<
-      (path: string) => Promise<boolean>
+    expectTypeOf(agent.fs.stat).toEqualTypeOf<
+      (path: string) => Promise<StatResult>
     >();
-    expectTypeOf(agent.fs.remove).toEqualTypeOf<
-      (path: string) => Promise<void>
+    expectTypeOf(agent.fs.rm).toEqualTypeOf<(path: string) => Promise<void>>();
+    expectTypeOf(agent.fs.rename).toEqualTypeOf<
+      (oldPath: string, newPath: string) => Promise<void>
     >();
+    expectTypeOf(agent.fs.cwd).toEqualTypeOf<() => Promise<string>>();
   });
 
   it("has use, search, and call methods", () => {

@@ -13,7 +13,7 @@ Create a new crag instance.
 import { createCrag } from "crag";
 
 const agent = createCrag({
-  permissions: { "fs.read": "allow" },
+  permissions: { "fs.readFile": "allow" },
   defaultPermission: "ask",
   onPermissionRequest: async (op, args) => true,
 });
@@ -61,20 +61,67 @@ Resolve the permission level for an operation. Used internally, but exported for
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `qualifiedName` | `string` | e.g. `"fs.read"` |
+| `qualifiedName` | `string` | e.g. `"fs.readFile"` |
 | `operationDefault` | `Permission \| undefined` | The operation's default |
 | `policy` | `PermissionPolicy` | The permission policy map |
 | `globalDefault` | `Permission` | The global fallback |
 
 **Returns:** `Permission`
 
+## Built-in skills
+
 ### `fs()`
 
-Create the built-in file system skill. See the [fs skill reference](/skills/fs/) for details.
+File system operations. See the [fs skill reference](/skills/fs/).
 
 ```ts
 import { fs } from "crag";
 const agent = createCrag().use(fs());
+```
+
+### `git(opts?)`
+
+Git operations. Takes optional `{ cwd?: string }`. See the [git skill reference](/skills/git/).
+
+```ts
+import { git } from "crag";
+const agent = createCrag().use(git({ cwd: "/repo" }));
+```
+
+### `grep(opts?)`
+
+Recursive file search. Takes optional `{ cwd?: string }`. See the [grep skill reference](/skills/grep/).
+
+```ts
+import { grep } from "crag";
+const agent = createCrag().use(grep());
+```
+
+### `edit()`
+
+File editing operations. See the [edit skill reference](/skills/edit/).
+
+```ts
+import { edit } from "crag";
+const agent = createCrag().use(edit());
+```
+
+### `shell(opts?)`
+
+Shell command execution. Takes optional `{ cwd?, env?, timeout? }`. See the [shell skill reference](/skills/shell/).
+
+```ts
+import { shell } from "crag";
+const agent = createCrag().use(shell());
+```
+
+### `http()`
+
+HTTP client. See the [http skill reference](/skills/http/).
+
+```ts
+import { http } from "crag";
+const agent = createCrag().use(http());
 ```
 
 ## Instance methods
@@ -84,7 +131,7 @@ const agent = createCrag().use(fs());
 Register a skill and return a new instance with the skill's types merged in.
 
 ```ts
-const agent = createCrag().use(fs()).use(weather);
+const agent = createCrag().use(fs()).use(git()).use(grep());
 ```
 
 ### `agent.search(query)`
@@ -193,6 +240,161 @@ interface DirEntry {
   path: string;
   isFile: boolean;
   isDirectory: boolean;
+}
+```
+
+### `StatResult`
+
+```ts
+interface StatResult {
+  size: number;
+  isFile: boolean;
+  isDirectory: boolean;
+  modified: string;
+  created: string;
+}
+```
+
+### `GitStatus`
+
+```ts
+interface GitStatus {
+  branch: string;
+  upstream?: string;
+  ahead: number;
+  behind: number;
+  staged: FileChange[];
+  unstaged: FileChange[];
+  untracked: string[];
+}
+```
+
+### `FileChange`
+
+```ts
+interface FileChange {
+  path: string;
+  status: "added" | "modified" | "deleted" | "renamed" | "copied";
+  oldPath?: string;
+}
+```
+
+### `DiffFile`
+
+```ts
+interface DiffFile {
+  path: string;
+  additions: number;
+  deletions: number;
+}
+```
+
+### `Commit`
+
+```ts
+interface Commit {
+  hash: string;
+  shortHash: string;
+  author: string;
+  email: string;
+  date: string;
+  message: string;
+}
+```
+
+### `Branch`
+
+```ts
+interface Branch {
+  name: string;
+  current: boolean;
+}
+```
+
+### `GrepMatch`
+
+```ts
+interface GrepMatch {
+  file: string;
+  line: number;
+  column: number;
+  text: string;
+  context?: { before: string[]; after: string[] };
+}
+```
+
+### `GrepOptions`
+
+```ts
+interface GrepOptions {
+  path?: string;
+  glob?: string;
+  maxResults?: number;
+  contextLines?: number;
+  ignoreCase?: boolean;
+}
+```
+
+### `EditOp`
+
+```ts
+type EditOp =
+  | { type: "insert"; line: number; content: string }
+  | { type: "remove"; start: number; end: number }
+  | { type: "replace"; start: number; end: number; content: string };
+```
+
+### `ExecResult`
+
+```ts
+interface ExecResult {
+  stdout: string;
+  stderr: string;
+  exitCode: number;
+}
+```
+
+### `ShellExecOptions`
+
+```ts
+interface ShellExecOptions {
+  cwd?: string;
+  env?: Record<string, string>;
+  timeout?: number;
+  stdin?: string;
+}
+```
+
+### `HttpResponse`
+
+```ts
+interface HttpResponse {
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  body: string;
+}
+```
+
+### `JsonResponse`
+
+```ts
+interface JsonResponse {
+  status: number;
+  statusText: string;
+  headers: Record<string, string>;
+  data: unknown;
+}
+```
+
+### `RequestOptions`
+
+```ts
+interface RequestOptions {
+  method?: string;
+  headers?: Record<string, string>;
+  body?: string;
+  timeout?: number;
 }
 ```
 

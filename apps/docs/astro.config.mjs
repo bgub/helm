@@ -34,7 +34,14 @@ export default defineConfig({
         },
         {
           label: "Skills",
-          items: [{ label: "fs", slug: "skills/fs" }],
+          items: [
+            { label: "fs", slug: "skills/fs" },
+            { label: "git", slug: "skills/git" },
+            { label: "grep", slug: "skills/grep" },
+            { label: "edit", slug: "skills/edit" },
+            { label: "shell", slug: "skills/shell" },
+            { label: "http", slug: "skills/http" },
+          ],
         },
         {
           label: "Reference",

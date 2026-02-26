@@ -13,12 +13,12 @@ const agent = createCrag().use(fs());
 
 ## Operations
 
-### `fs.read`
+### `fs.readFile`
 
 Read a file and return its content as a string.
 
 ```ts
-const { content } = await agent.fs.read(path);
+const { content } = await agent.fs.readFile(path);
 ```
 
 | Parameter | Type | Description |
@@ -30,12 +30,12 @@ const { content } = await agent.fs.read(path);
 **Default permission:** `"allow"`
 **Tags:** `file`, `read`
 
-### `fs.write`
+### `fs.writeFile`
 
-Write content to a file.
+Write content to a file, creating it if it doesn't exist.
 
 ```ts
-await agent.fs.write(path, content);
+await agent.fs.writeFile(path, content);
 ```
 
 | Parameter | Type | Description |
@@ -48,12 +48,13 @@ await agent.fs.write(path, content);
 **Default permission:** `"ask"`
 **Tags:** `file`, `write`
 
-### `fs.list`
+### `fs.readdir`
 
 List entries in a directory, with optional glob filtering.
 
 ```ts
-const { entries } = await agent.fs.list(path, opts?);
+const { entries } = await agent.fs.readdir(path);
+const { entries: tsFiles } = await agent.fs.readdir(path, { glob: "*.ts" });
 ```
 
 | Parameter | Type | Description |
@@ -63,43 +64,69 @@ const { entries } = await agent.fs.list(path, opts?);
 
 **Returns:** `Promise<{ entries: DirEntry[] }>`
 
-Each `DirEntry` has the following shape:
-
 ```ts
 interface DirEntry {
-  name: string;        // entry name
-  path: string;        // full path
-  isFile: boolean;     // true if regular file
-  isDirectory: boolean; // true if directory
+  name: string;
+  path: string;
+  isFile: boolean;
+  isDirectory: boolean;
 }
 ```
 
 **Default permission:** `"allow"`
 **Tags:** `directory`, `list`
 
-### `fs.exists`
+### `fs.mkdir`
 
-Check whether a file or directory exists.
+Create a directory, including any parent directories.
 
 ```ts
-const exists = await agent.fs.exists(path);
+await agent.fs.mkdir(path);
 ```
 
 | Parameter | Type | Description |
 |-----------|------|-------------|
-| `path` | `string` | Path to check |
+| `path` | `string` | Directory path to create |
 
-**Returns:** `Promise<boolean>`
+**Returns:** `Promise<void>`
+
+**Default permission:** `"ask"`
+**Tags:** `directory`, `create`, `mkdir`
+
+### `fs.stat`
+
+Get file or directory metadata — size, type, timestamps.
+
+```ts
+const info = await agent.fs.stat(path);
+// { size, isFile, isDirectory, modified, created }
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `path` | `string` | Path to stat |
+
+**Returns:** `Promise<StatResult>`
+
+```ts
+interface StatResult {
+  size: number;
+  isFile: boolean;
+  isDirectory: boolean;
+  modified: string;
+  created: string;
+}
+```
 
 **Default permission:** `"allow"`
-**Tags:** `file`, `check`
+**Tags:** `file`, `stat`, `info`, `metadata`
 
-### `fs.remove`
+### `fs.rm`
 
 Remove a file or directory (recursive).
 
 ```ts
-await agent.fs.remove(path);
+await agent.fs.rm(path);
 ```
 
 | Parameter | Type | Description |
@@ -109,4 +136,35 @@ await agent.fs.remove(path);
 **Returns:** `Promise<void>`
 
 **Default permission:** `"ask"`
-**Tags:** `file`, `delete`
+**Tags:** `file`, `delete`, `remove`, `rm`
+
+### `fs.rename`
+
+Rename or move a file or directory.
+
+```ts
+await agent.fs.rename("old-name.ts", "new-name.ts");
+```
+
+| Parameter | Type | Description |
+|-----------|------|-------------|
+| `oldPath` | `string` | Current path |
+| `newPath` | `string` | New path |
+
+**Returns:** `Promise<void>`
+
+**Default permission:** `"ask"`
+**Tags:** `file`, `rename`, `move`, `mv`
+
+### `fs.cwd`
+
+Get the current working directory.
+
+```ts
+const path = await agent.fs.cwd();
+```
+
+**Returns:** `Promise<string>`
+
+**Default permission:** `"allow"`
+**Tags:** `directory`, `cwd`, `pwd`

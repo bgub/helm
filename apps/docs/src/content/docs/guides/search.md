@@ -18,8 +18,8 @@ Each result is a `SearchResult` object:
 ```ts
 interface SearchResult {
   skill: string;              // e.g. "fs"
-  operation: string;          // e.g. "read"
-  qualifiedName: string;      // e.g. "fs.read"
+  operation: string;          // e.g. "readFile"
+  qualifiedName: string;      // e.g. "fs.readFile"
   description: string;        // operation description
   signature?: string;         // call signature, e.g. "(path: string) => Promise<{ content: string }>"
   tags: string[];             // operation tags
@@ -48,7 +48,7 @@ After discovering operations via search, agents call them directly through the t
 
 ```ts
 const results = agent.search("file read");
-// results[0].qualifiedName === "fs.read"
+// results[0].qualifiedName === "fs.readFile"
 
-const { content } = await agent.fs.read("./package.json");
+const { content } = await agent.fs.readFile("./package.json");
 ```

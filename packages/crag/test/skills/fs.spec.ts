@@ -23,13 +23,13 @@ describe("fs skill", () => {
     const filePath = nodePath.join(tmpDir, "test.txt");
     await nodeFs.writeFile(filePath, "hello world", "utf-8");
 
-    const result = await agent().fs.read(filePath);
+    const result = await agent().fs.readFile(filePath);
     expect(result).toEqual({ content: "hello world" });
   });
 
   it("writes a file", async () => {
     const filePath = nodePath.join(tmpDir, "out.txt");
-    await agent().fs.write(filePath, "written content");
+    await agent().fs.writeFile(filePath, "written content");
 
     const content = await nodeFs.readFile(filePath, "utf-8");
     expect(content).toBe("written content");
@@ -40,7 +40,7 @@ describe("fs skill", () => {
     await nodeFs.writeFile(nodePath.join(tmpDir, "b.ts"), "b");
     await nodeFs.mkdir(nodePath.join(tmpDir, "sub"));
 
-    const result = await agent().fs.list(tmpDir);
+    const result = await agent().fs.readdir(tmpDir);
     expect(result.entries).toHaveLength(3);
 
     const names = result.entries.map((e) => e.name).sort();
@@ -55,7 +55,7 @@ describe("fs skill", () => {
     await nodeFs.writeFile(nodePath.join(tmpDir, "a.txt"), "a");
     await nodeFs.writeFile(nodePath.join(tmpDir, "b.ts"), "b");
 
-    const result = await agent().fs.list(tmpDir, { glob: "*.txt" });
+    const result = await agent().fs.readdir(tmpDir, { glob: "*.txt" });
     expect(result.entries).toHaveLength(1);
     expect(result.entries[0].name).toBe("a.txt");
   });
@@ -74,20 +74,56 @@ describe("fs skill", () => {
     await expect(agent().fs.mkdir(dirPath)).resolves.toBeUndefined();
   });
 
-  it("checks file existence", async () => {
-    const filePath = nodePath.join(tmpDir, "exists.txt");
-    await nodeFs.writeFile(filePath, "yes");
+  it("stats a file", async () => {
+    const filePath = nodePath.join(tmpDir, "stat-me.txt");
+    await nodeFs.writeFile(filePath, "hello");
 
-    expect(await agent().fs.exists(filePath)).toBe(true);
-    expect(await agent().fs.exists(nodePath.join(tmpDir, "nope"))).toBe(false);
+    const result = await agent().fs.stat(filePath);
+    expect(result.size).toBe(5);
+    expect(result.isFile).toBe(true);
+    expect(result.isDirectory).toBe(false);
+    expect(result.modified).toBeTruthy();
+    expect(result.created).toBeTruthy();
+  });
+
+  it("stats a directory", async () => {
+    const dirPath = nodePath.join(tmpDir, "stat-dir");
+    await nodeFs.mkdir(dirPath);
+
+    const result = await agent().fs.stat(dirPath);
+    expect(result.isFile).toBe(false);
+    expect(result.isDirectory).toBe(true);
+  });
+
+  it("stat throws for non-existent path", async () => {
+    await expect(
+      agent().fs.stat(nodePath.join(tmpDir, "nope")),
+    ).rejects.toThrow();
   });
 
   it("removes a file", async () => {
     const filePath = nodePath.join(tmpDir, "to-remove.txt");
     await nodeFs.writeFile(filePath, "gone soon");
 
-    await agent().fs.remove(filePath);
+    await agent().fs.rm(filePath);
 
     await expect(nodeFs.access(filePath)).rejects.toThrow();
+  });
+
+  it("renames a file", async () => {
+    const oldPath = nodePath.join(tmpDir, "old.txt");
+    const newPath = nodePath.join(tmpDir, "new.txt");
+    await nodeFs.writeFile(oldPath, "moveme");
+
+    await agent().fs.rename(oldPath, newPath);
+
+    await expect(nodeFs.access(oldPath)).rejects.toThrow();
+    const content = await nodeFs.readFile(newPath, "utf-8");
+    expect(content).toBe("moveme");
+  });
+
+  it("returns current working directory", async () => {
+    const result = await agent().fs.cwd();
+    expect(result).toBe(process.cwd());
   });
 });

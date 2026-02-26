@@ -5,7 +5,7 @@ description: Skills, operations, the builder pattern, and the search+call flow.
 
 ## Skills
 
-A **skill** is a named group of related operations. For example, the built-in `fs` skill groups file system operations like `read`, `write`, `list`, `exists`, and `remove`.
+A **skill** is a named group of related operations. For example, the built-in `fs` skill groups file system operations like `readFile`, `writeFile`, `readdir`, `stat`, and `rm`.
 
 Each skill has:
 - A unique **name** (e.g. `"fs"`)
@@ -23,9 +23,9 @@ An **operation** is a single typed function within a skill. Each operation has:
 Operations are called through their skill namespace:
 
 ```ts
-await agent.fs.read("./file.txt");
+await agent.fs.readFile("./file.txt");
 //         ^^ skill
-//            ^^^^ operation
+//            ^^^^^^^^ operation
 ```
 
 ## Builder pattern
@@ -35,7 +35,8 @@ await agent.fs.read("./file.txt");
 ```ts
 const agent = createCrag()
   .use(fs())       // agent now has agent.fs.*
-  .use(weather);   // agent now has agent.fs.* + agent.weather.*
+  .use(git())      // agent now has agent.fs.* + agent.git.*
+  .use(grep())     // agent now has agent.fs.* + agent.git.* + agent.grep.*
 ```
 
 TypeScript infers the full type at each step — no codegen, no `Proxy`.
@@ -44,9 +45,10 @@ TypeScript infers the full type at each step — no codegen, no `Proxy`.
 
 Every operation has a **qualified name** in the form `skill.operation`:
 
-- `fs.read`
-- `fs.write`
-- `weather.forecast`
+- `fs.readFile`
+- `fs.writeFile`
+- `git.status`
+- `grep.search`
 
 Qualified names are used for permissions, search results, and dynamic calling.
 
@@ -64,7 +66,7 @@ After discovering the right operation, agents call it directly through the typed
 
 ```ts
 const results = agent.search("read file");
-// results[0].qualifiedName === "fs.read"
+// results[0].qualifiedName === "fs.readFile"
 
-const { content } = await agent.fs.read("./package.json");
+const { content } = await agent.fs.readFile("./package.json");
 ```

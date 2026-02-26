@@ -1,10 +1,12 @@
-import { type ChildProcess, fork } from "node:child_process";
+import { type ChildProcess, spawn } from "node:child_process";
 import path from "node:path";
 
-// Resolve from process.cwd() (the demo app root) rather than import.meta.url,
-// since Next.js bundles this file into .next/server/ where the relative path
-// to the source .mjs file would break.
-const WORKER_PATH = path.join(process.cwd(), "lib", "sandbox-worker.mjs");
+// Resolve worker at call time to avoid Turbopack static analysis.
+// Uses process.cwd() (the demo app root) since Next.js bundles this file
+// into .next/server/ where relative paths to the source .mjs would break.
+function getWorkerPath(): string {
+  return path.join(process.cwd(), "lib", "sandbox-worker.mjs");
+}
 
 const TIMEOUT_MS = 30_000;
 
@@ -40,7 +42,9 @@ function walkAgent(agent: any, method: string): unknown {
 
 export async function evaluate(code: string, agent: unknown): Promise<unknown> {
   return new Promise((resolve, reject) => {
-    const child: ChildProcess = fork(WORKER_PATH, {
+    // Use spawn instead of fork so Turbopack doesn't statically analyze the
+    // worker path. The IPC channel is established via the stdio option.
+    const child: ChildProcess = spawn(process.execPath, [getWorkerPath()], {
       stdio: ["pipe", "pipe", "pipe", "ipc"],
     });
 
