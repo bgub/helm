@@ -9,7 +9,7 @@
     "typed",
     "typescript"
   ],
-  "homepage": "https://github.com/bgub/crag",
+  "homepage": "https://github.com/bgub/helm",
   "type": "module",
   "exports": {
     ".": {
@@ -28,9 +28,9 @@
     "test": "vitest run --coverage"
   },
   "author": "Ben Gubler <nebrelbug@gmail.com>",
-  "repository": "github:bgub/crag",
+  "repository": "github:bgub/helm",
   "bugs": {
-    "url": "https://github.com/bgub/crag/issues"
+    "url": "https://github.com/bgub/helm/issues"
   },
   "license": "MIT",
   "engines": {
