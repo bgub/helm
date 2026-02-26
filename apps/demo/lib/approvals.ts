@@ -10,7 +10,7 @@ interface ApprovalState {
   nextId: number;
 }
 
-const KEY = "__crag_approval_state__" as const;
+const KEY = "__helm_approval_state__" as const;
 
 function getState(): ApprovalState {
   const g = globalThis as unknown as Record<string, ApprovalState | undefined>;

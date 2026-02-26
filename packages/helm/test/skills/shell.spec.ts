@@ -56,18 +56,18 @@ describe("shell skill", () => {
 
   it("uses factory env option", async () => {
     const a = createHelm({ permissions: { "shell.*": "allow" } }).use(
-      shell({ env: { CRAG_TEST_VAR: "from_factory" } }),
+      shell({ env: { HELM_TEST_VAR: "from_factory" } }),
     );
-    const result = await a.shell.dangerousExec("echo $CRAG_TEST_VAR");
+    const result = await a.shell.dangerousExec("echo $HELM_TEST_VAR");
     expect(result.stdout.trim()).toBe("from_factory");
   });
 
   it("merges per-call env with factory env", async () => {
     const a = createHelm({ permissions: { "shell.*": "allow" } }).use(
-      shell({ env: { CRAG_A: "a" } }),
+      shell({ env: { HELM_A: "a" } }),
     );
-    const result = await a.shell.dangerousExec("echo $CRAG_A $CRAG_B", {
-      env: { CRAG_B: "b" },
+    const result = await a.shell.dangerousExec("echo $HELM_A $HELM_B", {
+      env: { HELM_B: "b" },
     });
     expect(result.stdout.trim()).toBe("a b");
   });

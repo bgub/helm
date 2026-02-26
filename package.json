@@ -3,7 +3,7 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "build": "turbo run build",
-    "dev": "turbo run dev",
+    "dev": "turbo run dev --ui tui",
     "test": "turbo run test",
     "lint": "biome check --error-on-warnings",
     "format": "biome format --write"
