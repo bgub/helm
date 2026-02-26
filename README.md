@@ -10,7 +10,7 @@
 
 <span align="center">
 
-[![npm](https://img.shields.io/npm/v/helm?logo=npm&label=npm)](https://www.npmjs.com/package/helm)
+[![npm](https://img.shields.io/npm/v/@bgub/helm?logo=npm&label=npm)](https://www.npmjs.com/package/@bgub/helm)
 [![CI](https://github.com/bgub/helm/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/helm/actions)
 [![Codecov](https://codecov.io/github/bgub/helm/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/helm)
 
@@ -21,13 +21,13 @@ A typed TypeScript framework for AI agents. Call typed functions instead of pars
 ## Install
 
 ```bash
-npm install helm
+npm install @bgub/helm
 ```
 
 ## Quick start
 
 ```ts
-import { createHelm, fs } from "helm";
+import { createHelm, fs } from "@bgub/helm";
 
 const agent = createHelm({
   permissions: {
@@ -73,7 +73,7 @@ const { staged, unstaged } = await agent.git.status();
 ## Defining custom skills
 
 ```ts
-import { defineSkill } from "helm";
+import { defineSkill } from "@bgub/helm";
 
 const weather = defineSkill({
   name: "weather",

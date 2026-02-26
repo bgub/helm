@@ -5,12 +5,12 @@ import { defineConfig } from "astro/config";
 export default defineConfig({
   integrations: [
     starlight({
-      title: "crag",
+      title: "helm",
       social: [
         {
           icon: "github",
           label: "GitHub",
-          href: "https://github.com/bgub/crag",
+          href: "https://github.com/bgub/helm",
         },
       ],
       customCss: ["./src/styles/global.css"],
