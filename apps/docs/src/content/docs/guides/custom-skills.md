@@ -8,7 +8,7 @@ description: How to define your own skills with full type inference.
 Use `defineSkill` to create a skill with fully inferred types:
 
 ```ts
-import { defineSkill } from "bevel";
+import { defineSkill } from "@bgub/helm";
 
 const weather = defineSkill({
   name: "weather",
@@ -30,7 +30,7 @@ const weather = defineSkill({
 The return type of `defineSkill` preserves the skill name, operation names, and handler signatures. When registered with `.use()`, TypeScript knows the exact shape:
 
 ```ts
-const agent = createBevel().use(weather);
+const agent = createHelm().use(weather);
 
 // Fully typed — city: string, returns { temp: number; sky: string }
 const { temp, sky } = await agent.weather.forecast("Seattle");
@@ -82,7 +82,7 @@ const db = defineSkill({
 Custom skills are registered the same way as built-in skills:
 
 ```ts
-const agent = createBevel({
+const agent = createHelm({
   permissions: {
     "weather.forecast": "allow",
     "db.query": "allow",

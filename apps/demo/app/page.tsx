@@ -621,7 +621,7 @@ export default function Chat() {
           {messages.length === 0 && (
             <div className="flex-1 flex items-center justify-center">
               <span className="text-[1.375rem] font-semibold text-[#0d0d0d]">
-                bevel
+                helm
               </span>
             </div>
           )}
@@ -718,7 +718,7 @@ export default function Chat() {
                 handleSubmit();
               }
             }}
-            placeholder="Message bevel..."
+            placeholder="Message helm..."
             rows={1}
             className="flex-1 border-none outline-none resize-none text-[0.9375rem] leading-normal px-2 py-1.5 bg-transparent text-[#0d0d0d] max-h-[200px]"
           />
@@ -736,7 +736,7 @@ export default function Chat() {
           </button>
         </div>
         <p className="text-center text-xs text-[#9a9a9a] mt-3">
-          bevel can make mistakes. Verify important information.
+          helm can make mistakes. Verify important information.
         </p>
       </div>
     </div>

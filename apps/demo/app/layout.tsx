@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "bevel demo",
+  title: "helm demo",
 };
 
 export default function RootLayout({

@@ -30,10 +30,10 @@ await agent.fs.readFile("./file.txt");
 
 ## Builder pattern
 
-`createBevel()` returns a builder. Each `.use()` call registers a skill and returns a new instance with the skill's types merged in:
+`createHelm()` returns a builder. Each `.use()` call registers a skill and returns a new instance with the skill's types merged in:
 
 ```ts
-const agent = createBevel()
+const agent = createHelm()
   .use(fs())       // agent now has agent.fs.*
   .use(git())      // agent now has agent.fs.* + agent.git.*
   .use(grep())     // agent now has agent.fs.* + agent.git.* + agent.grep.*

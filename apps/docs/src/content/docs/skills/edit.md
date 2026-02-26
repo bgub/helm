@@ -3,12 +3,12 @@ title: "edit"
 description: Built-in file editing skill reference.
 ---
 
-The `edit` skill provides file editing operations — replace text, insert lines, remove lines, and apply batch edits. Import it from `bevel` and register it with `.use()`:
+The `edit` skill provides file editing operations — replace text, insert lines, remove lines, and apply batch edits. Import it from `helm` and register it with `.use()`:
 
 ```ts
-import { createBevel, edit } from "bevel";
+import { createHelm, edit } from "@bgub/helm";
 
-const agent = createBevel().use(edit());
+const agent = createHelm().use(edit());
 ```
 
 ## Operations

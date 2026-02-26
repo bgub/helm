@@ -1,18 +1,18 @@
 ---
 title: API Reference
-description: Complete reference for all bevel exports.
+description: Complete reference for all helm exports.
 ---
 
 ## Functions
 
-### `createBevel(options?)`
+### `createHelm(options?)`
 
-Create a new bevel instance.
+Create a new helm instance.
 
 ```ts
-import { createBevel } from "bevel";
+import { createHelm } from "@bgub/helm";
 
-const agent = createBevel({
+const agent = createHelm({
   permissions: { "fs.readFile": "allow" },
   defaultPermission: "ask",
   onPermissionRequest: async (op, args) => true,
@@ -27,14 +27,14 @@ const agent = createBevel({
 | `defaultPermission` | `Permission` | `"ask"` | Global fallback permission |
 | `onPermissionRequest` | `(operation: string, args: unknown[]) => Promise<boolean> \| boolean` | `undefined` | Called when permission is `"ask"` |
 
-**Returns:** `BevelInstance`
+**Returns:** `HelmInstance`
 
 ### `defineSkill(config)`
 
 Define a custom skill with full type inference.
 
 ```ts
-import { defineSkill } from "bevel";
+import { defineSkill } from "@bgub/helm";
 
 const mySkill = defineSkill({
   name: "mySkill",
@@ -75,8 +75,8 @@ Resolve the permission level for an operation. Used internally, but exported for
 File system operations. See the [fs skill reference](/skills/fs/).
 
 ```ts
-import { fs } from "bevel";
-const agent = createBevel().use(fs());
+import { fs } from "@bgub/helm";
+const agent = createHelm().use(fs());
 ```
 
 ### `git(opts?)`
@@ -84,8 +84,8 @@ const agent = createBevel().use(fs());
 Git operations. Takes optional `{ cwd?: string }`. See the [git skill reference](/skills/git/).
 
 ```ts
-import { git } from "bevel";
-const agent = createBevel().use(git({ cwd: "/repo" }));
+import { git } from "@bgub/helm";
+const agent = createHelm().use(git({ cwd: "/repo" }));
 ```
 
 ### `grep(opts?)`
@@ -93,8 +93,8 @@ const agent = createBevel().use(git({ cwd: "/repo" }));
 Recursive file search. Takes optional `{ cwd?: string }`. See the [grep skill reference](/skills/grep/).
 
 ```ts
-import { grep } from "bevel";
-const agent = createBevel().use(grep());
+import { grep } from "@bgub/helm";
+const agent = createHelm().use(grep());
 ```
 
 ### `edit()`
@@ -102,8 +102,8 @@ const agent = createBevel().use(grep());
 File editing operations. See the [edit skill reference](/skills/edit/).
 
 ```ts
-import { edit } from "bevel";
-const agent = createBevel().use(edit());
+import { edit } from "@bgub/helm";
+const agent = createHelm().use(edit());
 ```
 
 ### `shell(opts?)`
@@ -111,8 +111,8 @@ const agent = createBevel().use(edit());
 Shell command execution. Takes optional `{ cwd?, env?, timeout? }`. See the [shell skill reference](/skills/shell/).
 
 ```ts
-import { shell } from "bevel";
-const agent = createBevel().use(shell());
+import { shell } from "@bgub/helm";
+const agent = createHelm().use(shell());
 ```
 
 ### `http()`
@@ -120,8 +120,8 @@ const agent = createBevel().use(shell());
 HTTP client. See the [http skill reference](/skills/http/).
 
 ```ts
-import { http } from "bevel";
-const agent = createBevel().use(http());
+import { http } from "@bgub/helm";
+const agent = createHelm().use(http());
 ```
 
 ## Instance methods
@@ -131,7 +131,7 @@ const agent = createBevel().use(http());
 Register a skill and return a new instance with the skill's types merged in.
 
 ```ts
-const agent = createBevel().use(fs()).use(git()).use(grep());
+const agent = createHelm().use(fs()).use(git()).use(grep());
 ```
 
 ### `agent.search(query)`
@@ -157,10 +157,10 @@ type Permission = "allow" | "ask" | "deny";
 type PermissionPolicy = Record<string, Permission>;
 ```
 
-### `BevelOptions`
+### `HelmOptions`
 
 ```ts
-interface BevelOptions {
+interface HelmOptions {
   permissions?: PermissionPolicy;
   onPermissionRequest?: (operation: string, args: unknown[]) => Promise<boolean> | boolean;
   defaultPermission?: Permission;
@@ -221,13 +221,13 @@ type BoundOperations<Ops extends Record<string, OperationDef>> = {
 };
 ```
 
-### `BevelInstance<S>`
+### `HelmInstance<S>`
 
 ```ts
-type BevelInstance<S> = BoundSkills<S> & {
+type HelmInstance<S> = BoundSkills<S> & {
   use<Name extends string, Ops extends Record<string, OperationDef>>(
     skill: Skill<Name, Ops>,
-  ): BevelInstance<S & Record<Name, Ops>>;
+  ): HelmInstance<S & Record<Name, Ops>>;
   search(query: string): SearchResult[];
 };
 ```

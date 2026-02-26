@@ -3,14 +3,14 @@ title: "grep"
 description: Built-in search skill reference.
 ---
 
-The `grep` skill provides recursive file content search with regex pattern matching. Pure Node.js implementation — no external dependencies. Import it from `bevel` and register it with `.use()`:
+The `grep` skill provides recursive file content search with regex pattern matching. Pure Node.js implementation — no external dependencies. Import it from `helm` and register it with `.use()`:
 
 ```ts
-import { createBevel, grep } from "bevel";
+import { createHelm, grep } from "@bgub/helm";
 
-const agent = createBevel().use(grep());
+const agent = createHelm().use(grep());
 // or with a custom working directory:
-const agent2 = createBevel().use(grep({ cwd: "/path/to/project" }));
+const agent2 = createHelm().use(grep({ cwd: "/path/to/project" }));
 ```
 
 ## Operations

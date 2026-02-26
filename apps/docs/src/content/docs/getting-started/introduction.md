@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: What bevel is and why it exists.
+description: What helm is and why it exists.
 ---
 
 ## The problem
@@ -16,12 +16,12 @@ This means no type safety, no structured errors, and no way to control what oper
 
 ## The solution
 
-bevel gives agents typed functions with structured inputs and outputs:
+helm gives agents typed functions with structured inputs and outputs:
 
 ```ts
-import { createBevel, fs, git, grep } from "bevel";
+import { createHelm, fs, git, grep } from "@bgub/helm";
 
-const agent = createBevel({
+const agent = createHelm({
   permissions: {
     "fs.readFile": "allow",
     "fs.writeFile": "ask",
@@ -47,7 +47,7 @@ await agent.fs.writeFile("./output.json", JSON.stringify(data));
 
 ## Built-in skills
 
-bevel ships with six built-in skills covering common agent workflows:
+helm ships with six built-in skills covering common agent workflows:
 
 | Skill | Description | Example |
 |-------|-------------|---------|

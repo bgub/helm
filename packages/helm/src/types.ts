@@ -41,8 +41,8 @@ export type BoundOperations<Ops extends Record<string, OperationDef>> = {
 // Permission policy map
 export type PermissionPolicy = Record<string, Permission>;
 
-// Options for createBevel
-export interface BevelOptions {
+// Options for createHelm
+export interface HelmOptions {
   permissions?: PermissionPolicy;
   onPermissionRequest?: (
     operation: string,
@@ -67,13 +67,13 @@ type BoundSkills<S extends Record<string, Record<string, OperationDef>>> = {
   [K in keyof S]: BoundOperations<S[K]>;
 };
 
-// The BevelInstance type — framework methods + accumulated skill namespaces
-export type BevelInstance<
+// The HelmInstance type — framework methods + accumulated skill namespaces
+export type HelmInstance<
   // biome-ignore lint/complexity/noBannedTypes: empty default represents no skills registered
   S extends Record<string, Record<string, OperationDef>> = {},
 > = BoundSkills<S> & {
   use<Name extends string, Ops extends Record<string, OperationDef>>(
     skill: Skill<Name, Ops>,
-  ): BevelInstance<S & Record<Name, Ops>>;
+  ): HelmInstance<S & Record<Name, Ops>>;
   search(query: string): SearchResult[];
 };

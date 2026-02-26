@@ -1,6 +1,6 @@
 import { createServer, type Server } from "node:http";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
-import { createBevel } from "../../src/create-bevel.ts";
+import { createHelm } from "../../src/create-helm.ts";
 import { http } from "../../src/skills/http.ts";
 
 describe("http skill", () => {
@@ -56,7 +56,7 @@ describe("http skill", () => {
   });
 
   const agent = () =>
-    createBevel({ permissions: { "http.*": "allow" } }).use(http());
+    createHelm({ permissions: { "http.*": "allow" } }).use(http());
 
   it("fetches text response", async () => {
     const result = await agent().http.fetch(`${baseUrl}/text`);

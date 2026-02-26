@@ -3,12 +3,12 @@ title: "fs"
 description: Built-in file system skill reference.
 ---
 
-The `fs` skill provides file system operations. Import it from `bevel` and register it with `.use()`:
+The `fs` skill provides file system operations. Import it from `helm` and register it with `.use()`:
 
 ```ts
-import { createBevel, fs } from "bevel";
+import { createHelm, fs } from "@bgub/helm";
 
-const agent = createBevel().use(fs());
+const agent = createHelm().use(fs());
 ```
 
 ## Operations

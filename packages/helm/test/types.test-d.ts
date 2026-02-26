@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from "vitest";
-import { createBevel } from "../src/create-bevel.ts";
+import { createHelm } from "../src/create-helm.ts";
 import { defineSkill } from "../src/define-skill.ts";
 import type { DirEntry, StatResult } from "../src/skills/fs.ts";
 import { fs } from "../src/skills/fs.ts";
@@ -38,7 +38,7 @@ describe("defineSkill type inference", () => {
   });
 });
 
-describe("BevelInstance type inference", () => {
+describe("HelmInstance type inference", () => {
   it("exposes skill namespace after .use()", () => {
     const skill = defineSkill({
       name: "demo",
@@ -52,7 +52,7 @@ describe("BevelInstance type inference", () => {
       },
     });
 
-    const agent = createBevel().use(skill);
+    const agent = createHelm().use(skill);
 
     expectTypeOf(agent.demo.hello).toEqualTypeOf<(name: string) => string>();
   });
@@ -73,14 +73,14 @@ describe("BevelInstance type inference", () => {
       },
     });
 
-    const agent = createBevel().use(skill1).use(skill2);
+    const agent = createHelm().use(skill1).use(skill2);
 
     expectTypeOf(agent.alpha.one).toEqualTypeOf<() => number>();
     expectTypeOf(agent.beta.two).toEqualTypeOf<() => string>();
   });
 
   it("types the fs skill correctly", () => {
-    const agent = createBevel().use(fs());
+    const agent = createHelm().use(fs());
 
     expectTypeOf(agent.fs.readFile).toEqualTypeOf<
       (path: string) => Promise<{ content: string }>
@@ -108,7 +108,7 @@ describe("BevelInstance type inference", () => {
   });
 
   it("has use, search, and call methods", () => {
-    const agent = createBevel();
+    const agent = createHelm();
 
     expectTypeOf(agent.use).toBeFunction();
     expectTypeOf(agent.search).toBeFunction();

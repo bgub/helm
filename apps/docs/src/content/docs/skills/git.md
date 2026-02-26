@@ -3,14 +3,14 @@ title: "git"
 description: Built-in Git skill reference.
 ---
 
-The `git` skill provides typed Git operations. Import it from `bevel` and register it with `.use()`:
+The `git` skill provides typed Git operations. Import it from `helm` and register it with `.use()`:
 
 ```ts
-import { createBevel, git } from "bevel";
+import { createHelm, git } from "@bgub/helm";
 
-const agent = createBevel().use(git());
+const agent = createHelm().use(git());
 // or with a custom working directory:
-const agent2 = createBevel().use(git({ cwd: "/path/to/repo" }));
+const agent2 = createHelm().use(git({ cwd: "/path/to/repo" }));
 ```
 
 ## Operations

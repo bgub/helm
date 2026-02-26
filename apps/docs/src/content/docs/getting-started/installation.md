@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: How to install bevel in your project.
+description: How to install helm in your project.
 ---
 
 ## Requirements
@@ -12,22 +12,22 @@ description: How to install bevel in your project.
 
 ```bash
 # npm
-npm install bevel
+npm install helm
 
 # pnpm
-pnpm add bevel
+pnpm add helm
 
 # yarn
-yarn add bevel
+yarn add helm
 
 # bun
-bun add bevel
+bun add helm
 ```
 
 ## JSR
 
-bevel is also available on [JSR](https://jsr.io/@bgub/bevel):
+helm is also available on [JSR](https://jsr.io/@bgub/helm):
 
 ```bash
-npx jsr add @bgub/bevel
+npx jsr add @bgub/helm
 ```

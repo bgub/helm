@@ -1,18 +1,18 @@
-<h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">bevel</h1>
+<h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">helm</h1>
 
 <p align="center">
-  <a href="https://github.com/bgub/bevel/actions">CI</a>
+  <a href="https://github.com/bgub/helm/actions">CI</a>
   ·
-  <a href="https://github.com/bgub/bevel/releases">Releases</a>
+  <a href="https://github.com/bgub/helm/releases">Releases</a>
   ·
-  <a href="https://github.com/bgub/bevel/issues">Issues</a>
+  <a href="https://github.com/bgub/helm/issues">Issues</a>
 </p>
 
 <span align="center">
 
-[![npm](https://img.shields.io/npm/v/bevel?logo=npm&label=npm)](https://www.npmjs.com/package/bevel)
-[![CI](https://github.com/bgub/bevel/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/bevel/actions)
-[![Codecov](https://codecov.io/github/bgub/bevel/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/bevel)
+[![npm](https://img.shields.io/npm/v/helm?logo=npm&label=npm)](https://www.npmjs.com/package/helm)
+[![CI](https://github.com/bgub/helm/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/helm/actions)
+[![Codecov](https://codecov.io/github/bgub/helm/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/helm)
 
 </span>
 
@@ -21,15 +21,15 @@ A typed TypeScript framework for AI agents. Call typed functions instead of pars
 ## Install
 
 ```bash
-npm install bevel
+npm install helm
 ```
 
 ## Quick start
 
 ```ts
-import { createBevel, fs } from "bevel";
+import { createHelm, fs } from "helm";
 
-const agent = createBevel({
+const agent = createHelm({
   permissions: {
     "fs.read": "allow",
     "fs.write": "ask",
@@ -47,11 +47,11 @@ const { content } = await agent.fs.read("./package.json");
 const { entries } = await agent.fs.list("./src", { glob: "*.ts" });
 ```
 
-## Why bevel?
+## Why helm?
 
 Agents today shell out and parse strings. That means no type safety, no structured errors, and no way to control what operations are allowed.
 
-bevel gives agents typed functions with structured inputs and outputs:
+helm gives agents typed functions with structured inputs and outputs:
 
 ```ts
 // Instead of this:
@@ -73,7 +73,7 @@ const { staged, unstaged } = await agent.git.status();
 ## Defining custom skills
 
 ```ts
-import { defineSkill } from "bevel";
+import { defineSkill } from "helm";
 
 const weather = defineSkill({
   name: "weather",
@@ -92,7 +92,7 @@ const weather = defineSkill({
   },
 });
 
-const agent = createBevel().use(weather);
+const agent = createHelm().use(weather);
 const { temp, sky } = await agent.weather.forecast("Seattle");
 ```
 
@@ -106,7 +106,7 @@ Resolution order (first match wins):
 4. Global default — `defaultPermission` option (defaults to `"ask"`)
 
 ```ts
-const agent = createBevel({
+const agent = createHelm({
   permissions: {
     "fs.read": "allow",
     "fs.*": "ask",
@@ -144,8 +144,8 @@ const { content } = await agent.fs.read("./package.json");
 
 | Package | Description |
 |---------|-------------|
-| [`bevel`](./packages/bevel) | Core library |
-| [`@bevel/docs`](./apps/docs) | Documentation site |
+| [`helm`](./packages/helm) | Core library |
+| [`@helm/docs`](./apps/docs) | Documentation site |
 
 ## Development
 

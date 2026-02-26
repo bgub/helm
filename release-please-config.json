@@ -3,8 +3,8 @@
   "release-type": "node",
   "bump-minor-pre-major": true,
   "packages": {
-    "packages/bevel": {
-      "package-name": "bevel",
+    "packages/helm": {
+      "package-name": "@bgub/helm",
       "extra-files": ["jsr.json"]
     }
   }

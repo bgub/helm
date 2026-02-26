@@ -1,16 +1,16 @@
 ---
 title: Quick Start
-description: Get up and running with bevel in minutes.
+description: Get up and running with helm in minutes.
 ---
 
 ## Create an agent
 
-Import `createBevel` and built-in skills, then chain `.use()` to register them:
+Import `createHelm` and built-in skills, then chain `.use()` to register them:
 
 ```ts
-import { createBevel, fs, git, grep } from "bevel";
+import { createHelm, fs, git, grep } from "@bgub/helm";
 
-const agent = createBevel({
+const agent = createHelm({
   permissions: {
     "fs.readFile": "allow",
     "fs.writeFile": "ask",

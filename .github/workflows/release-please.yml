@@ -18,7 +18,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.rp.outputs['packages/bevel--release_created'] }}
+      release_created: ${{ steps.rp.outputs['packages/helm--release_created'] }}
     steps:
       - id: rp
         uses: googleapis/release-please-action@v4
@@ -47,12 +47,12 @@ jobs:
       - run: pnpm build
 
       - run: pnpm -s vitest run --reporter=dot
-        working-directory: packages/bevel
+        working-directory: packages/helm
         env:
           CI: true
 
       - name: publish to npm
-        working-directory: packages/bevel
+        working-directory: packages/helm
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [[ "$VERSION" == *-* ]]; then
@@ -62,5 +62,5 @@ jobs:
           fi
 
       - name: publish to JSR
-        working-directory: packages/bevel
+        working-directory: packages/helm
         run: pnpm dlx jsr publish

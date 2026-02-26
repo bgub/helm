@@ -44,6 +44,6 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
-          directory: packages/bevel/coverage
+          directory: packages/helm/coverage
           fail_ci_if_error: true
           verbose: true

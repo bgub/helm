@@ -1,6 +1,6 @@
-import { createBevel, edit, fs, git, grep, http, shell } from "bevel";
+import { createHelm, edit, fs, git, grep, http, shell } from "@bgub/helm";
 
-const agent = createBevel({ defaultPermission: "allow" })
+const agent = createHelm({ defaultPermission: "allow" })
   .use(fs())
   .use(git())
   .use(grep())

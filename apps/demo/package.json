@@ -1,5 +1,5 @@
 {
-  "name": "@bevel/demo",
+  "name": "@helm/demo",
   "private": true,
   "type": "module",
   "scripts": {
@@ -10,7 +10,7 @@
     "@ai-sdk/react": "^3",
     "@tailwindcss/postcss": "^4.2.1",
     "ai": "^6",
-    "bevel": "workspace:*",
+    "@bgub/helm": "workspace:*",
     "next": "^16",
     "postcss": "^8.5.6",
     "react": "^19",
