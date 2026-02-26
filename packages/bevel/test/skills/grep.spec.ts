@@ -2,7 +2,7 @@ import * as nodeFs from "node:fs/promises";
 import * as os from "node:os";
 import * as nodePath from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createCrag } from "../../src/create-crag.ts";
+import { createBevel } from "../../src/create-bevel.ts";
 import { grep } from "../../src/skills/grep.ts";
 
 describe("grep skill", () => {
@@ -10,7 +10,7 @@ describe("grep skill", () => {
 
   beforeEach(async () => {
     tmpDir = await nodeFs.mkdtemp(
-      nodePath.join(os.tmpdir(), "crag-grep-test-"),
+      nodePath.join(os.tmpdir(), "bevel-grep-test-"),
     );
   });
 
@@ -19,7 +19,7 @@ describe("grep skill", () => {
   });
 
   const agent = () =>
-    createCrag({ permissions: { "grep.*": "allow" } }).use(
+    createBevel({ permissions: { "grep.*": "allow" } }).use(
       grep({ cwd: tmpDir }),
     );
 

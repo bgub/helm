@@ -1,10 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { createCrag } from "../../src/create-crag.ts";
+import { createBevel } from "../../src/create-bevel.ts";
 import { shell } from "../../src/skills/shell.ts";
 
 describe("shell skill", () => {
   const agent = () =>
-    createCrag({ permissions: { "shell.*": "allow" } }).use(shell());
+    createBevel({ permissions: { "shell.*": "allow" } }).use(shell());
 
   it("executes a simple command", async () => {
     const result = await agent().shell.dangerousExec("echo hello");
@@ -39,7 +39,7 @@ describe("shell skill", () => {
   });
 
   it("uses factory cwd option", async () => {
-    const a = createCrag({ permissions: { "shell.*": "allow" } }).use(
+    const a = createBevel({ permissions: { "shell.*": "allow" } }).use(
       shell({ cwd: "/tmp" }),
     );
     const result = await a.shell.dangerousExec("pwd");
@@ -47,7 +47,7 @@ describe("shell skill", () => {
   });
 
   it("per-call cwd overrides factory cwd", async () => {
-    const a = createCrag({ permissions: { "shell.*": "allow" } }).use(
+    const a = createBevel({ permissions: { "shell.*": "allow" } }).use(
       shell({ cwd: "/tmp" }),
     );
     const result = await a.shell.dangerousExec("pwd", { cwd: "/" });
@@ -55,7 +55,7 @@ describe("shell skill", () => {
   });
 
   it("uses factory env option", async () => {
-    const a = createCrag({ permissions: { "shell.*": "allow" } }).use(
+    const a = createBevel({ permissions: { "shell.*": "allow" } }).use(
       shell({ env: { CRAG_TEST_VAR: "from_factory" } }),
     );
     const result = await a.shell.dangerousExec("echo $CRAG_TEST_VAR");
@@ -63,7 +63,7 @@ describe("shell skill", () => {
   });
 
   it("merges per-call env with factory env", async () => {
-    const a = createCrag({ permissions: { "shell.*": "allow" } }).use(
+    const a = createBevel({ permissions: { "shell.*": "allow" } }).use(
       shell({ env: { CRAG_A: "a" } }),
     );
     const result = await a.shell.dangerousExec("echo $CRAG_A $CRAG_B", {

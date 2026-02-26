@@ -3,8 +3,8 @@
   "release-type": "node",
   "bump-minor-pre-major": true,
   "packages": {
-    "packages/crag": {
-      "package-name": "crag",
+    "packages/bevel": {
+      "package-name": "bevel",
       "extra-files": ["jsr.json"]
     }
   }

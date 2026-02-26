@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createCrag } from "../src/create-crag.ts";
+import { createBevel } from "../src/create-bevel.ts";
 import { defineSkill } from "../src/define-skill.ts";
 import { PermissionDeniedError } from "../src/permissions.ts";
 
@@ -25,16 +25,16 @@ const testSkill = defineSkill({
   },
 });
 
-describe("createCrag", () => {
+describe("createBevel", () => {
   it("creates an instance", () => {
-    const agent = createCrag();
+    const agent = createBevel();
     expect(agent).toBeDefined();
     expect(typeof agent.use).toBe("function");
     expect(typeof agent.search).toBe("function");
   });
 
   it("registers a skill with .use()", () => {
-    const agent = createCrag().use(testSkill);
+    const agent = createBevel().use(testSkill);
     expect(agent.test).toBeDefined();
     expect(typeof agent.test.greet).toBe("function");
   });
@@ -52,7 +52,7 @@ describe("createCrag", () => {
       },
     });
 
-    const agent = createCrag({ defaultPermission: "allow" })
+    const agent = createBevel({ defaultPermission: "allow" })
       .use(testSkill)
       .use(other);
 
@@ -63,19 +63,19 @@ describe("createCrag", () => {
 
 describe("operation calls", () => {
   it("calls an allowed operation directly", async () => {
-    const agent = createCrag().use(testSkill);
+    const agent = createBevel().use(testSkill);
     const result = await agent.test.greet("world");
     expect(result).toBe("hello world");
   });
 
   it("throws PermissionDeniedError for denied operations", async () => {
-    const agent = createCrag().use(testSkill);
+    const agent = createBevel().use(testSkill);
     await expect(agent.test.secret()).rejects.toThrow(PermissionDeniedError);
   });
 
   it("calls onPermissionRequest for ask permission", async () => {
     const onPermissionRequest = vi.fn().mockResolvedValue(true);
-    const agent = createCrag({
+    const agent = createBevel({
       defaultPermission: "ask",
       onPermissionRequest,
     }).use(testSkill);
@@ -86,7 +86,7 @@ describe("operation calls", () => {
   });
 
   it("throws when onPermissionRequest returns false", async () => {
-    const agent = createCrag({
+    const agent = createBevel({
       defaultPermission: "ask",
       onPermissionRequest: () => false,
     }).use(testSkill);
@@ -95,21 +95,21 @@ describe("operation calls", () => {
   });
 
   it("throws when no onPermissionRequest for ask permission", async () => {
-    const agent = createCrag({ defaultPermission: "ask" }).use(testSkill);
+    const agent = createBevel({ defaultPermission: "ask" }).use(testSkill);
     await expect(agent.test.askable()).rejects.toThrow(PermissionDeniedError);
   });
 });
 
 describe(".search()", () => {
   it("searches registered operations", () => {
-    const agent = createCrag().use(testSkill);
+    const agent = createBevel().use(testSkill);
     const results = agent.search("greet");
     expect(results.length).toBeGreaterThan(0);
     expect(results[0].qualifiedName).toBe("test.greet");
   });
 
   it("returns empty for no matches", () => {
-    const agent = createCrag().use(testSkill);
+    const agent = createBevel().use(testSkill);
     const results = agent.search("nonexistent_xyz");
     expect(results).toEqual([]);
   });
@@ -117,7 +117,7 @@ describe(".search()", () => {
 
 describe("permission policy", () => {
   it("overrides operation default with policy", async () => {
-    const agent = createCrag({
+    const agent = createBevel({
       permissions: { "test.secret": "allow" },
     }).use(testSkill);
 
@@ -126,7 +126,7 @@ describe("permission policy", () => {
   });
 
   it("wildcard policy applies to all ops in a skill", async () => {
-    const agent = createCrag({
+    const agent = createBevel({
       permissions: { "test.*": "allow" },
     }).use(testSkill);
 

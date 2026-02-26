@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, it } from "vitest";
-import { createCrag } from "../src/create-crag.ts";
+import { createBevel } from "../src/create-bevel.ts";
 import { defineSkill } from "../src/define-skill.ts";
 import type { DirEntry, StatResult } from "../src/skills/fs.ts";
 import { fs } from "../src/skills/fs.ts";
@@ -38,7 +38,7 @@ describe("defineSkill type inference", () => {
   });
 });
 
-describe("CragInstance type inference", () => {
+describe("BevelInstance type inference", () => {
   it("exposes skill namespace after .use()", () => {
     const skill = defineSkill({
       name: "demo",
@@ -52,7 +52,7 @@ describe("CragInstance type inference", () => {
       },
     });
 
-    const agent = createCrag().use(skill);
+    const agent = createBevel().use(skill);
 
     expectTypeOf(agent.demo.hello).toEqualTypeOf<(name: string) => string>();
   });
@@ -73,14 +73,14 @@ describe("CragInstance type inference", () => {
       },
     });
 
-    const agent = createCrag().use(skill1).use(skill2);
+    const agent = createBevel().use(skill1).use(skill2);
 
     expectTypeOf(agent.alpha.one).toEqualTypeOf<() => number>();
     expectTypeOf(agent.beta.two).toEqualTypeOf<() => string>();
   });
 
   it("types the fs skill correctly", () => {
-    const agent = createCrag().use(fs());
+    const agent = createBevel().use(fs());
 
     expectTypeOf(agent.fs.readFile).toEqualTypeOf<
       (path: string) => Promise<{ content: string }>
@@ -108,7 +108,7 @@ describe("CragInstance type inference", () => {
   });
 
   it("has use, search, and call methods", () => {
-    const agent = createCrag();
+    const agent = createBevel();
 
     expectTypeOf(agent.use).toBeFunction();
     expectTypeOf(agent.search).toBeFunction();

@@ -1,6 +1,6 @@
 ---
 title: Installation
-description: How to install crag in your project.
+description: How to install bevel in your project.
 ---
 
 ## Requirements
@@ -12,22 +12,22 @@ description: How to install crag in your project.
 
 ```bash
 # npm
-npm install crag
+npm install bevel
 
 # pnpm
-pnpm add crag
+pnpm add bevel
 
 # yarn
-yarn add crag
+yarn add bevel
 
 # bun
-bun add crag
+bun add bevel
 ```
 
 ## JSR
 
-crag is also available on [JSR](https://jsr.io/@bgub/crag):
+bevel is also available on [JSR](https://jsr.io/@bgub/bevel):
 
 ```bash
-npx jsr add @bgub/crag
+npx jsr add @bgub/bevel
 ```

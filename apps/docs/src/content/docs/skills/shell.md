@@ -3,14 +3,14 @@ title: "shell"
 description: Built-in shell execution skill reference.
 ---
 
-The `shell` skill runs shell commands and returns structured output. Import it from `crag` and register it with `.use()`:
+The `shell` skill runs shell commands and returns structured output. Import it from `bevel` and register it with `.use()`:
 
 ```ts
-import { createCrag, shell } from "crag";
+import { createBevel, shell } from "bevel";
 
-const agent = createCrag().use(shell());
+const agent = createBevel().use(shell());
 // or with defaults:
-const agent2 = createCrag().use(shell({
+const agent2 = createBevel().use(shell({
   cwd: "/path/to/project",
   timeout: 30_000,
 }));

@@ -1,6 +1,6 @@
-import { createCrag, edit, fs, git, grep, http, shell } from "crag";
+import { createBevel, edit, fs, git, grep, http, shell } from "bevel";
 
-const agent = createCrag({ defaultPermission: "allow" })
+const agent = createBevel({ defaultPermission: "allow" })
   .use(fs())
   .use(git())
   .use(grep())

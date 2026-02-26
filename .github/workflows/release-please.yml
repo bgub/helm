@@ -18,7 +18,7 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.rp.outputs['packages/crag--release_created'] }}
+      release_created: ${{ steps.rp.outputs['packages/bevel--release_created'] }}
     steps:
       - id: rp
         uses: googleapis/release-please-action@v4
@@ -47,22 +47,20 @@ jobs:
       - run: pnpm build
 
       - run: pnpm -s vitest run --reporter=dot
-        working-directory: packages/crag
+        working-directory: packages/bevel
         env:
           CI: true
 
       - name: publish to npm
-        working-directory: packages/crag
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        working-directory: packages/bevel
         run: |
           VERSION=$(node -p "require('./package.json').version")
           if [[ "$VERSION" == *-* ]]; then
-            npm publish --access public --provenance --tag next
+            npm publish --access public --tag next
           else
-            npm publish --access public --provenance
+            npm publish --access public
           fi
 
       - name: publish to JSR
-        working-directory: packages/crag
+        working-directory: packages/bevel
         run: pnpm dlx jsr publish

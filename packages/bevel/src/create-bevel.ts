@@ -1,8 +1,8 @@
 import { PermissionDeniedError, resolvePermission } from "./permissions.ts";
 import { search } from "./search.ts";
 import type {
-  CragInstance,
-  CragOptions,
+  BevelInstance,
+  BevelOptions,
   OperationDef,
   Permission,
   PermissionPolicy,
@@ -15,7 +15,7 @@ interface RegistryEntry {
   boundOps: Record<string, (...args: unknown[]) => unknown>;
 }
 
-export function createCrag(options: CragOptions = {}): CragInstance {
+export function createBevel(options: BevelOptions = {}): BevelInstance {
   const policy: PermissionPolicy = options.permissions ?? {};
   const globalDefault: Permission = options.defaultPermission ?? "ask";
   const onPermissionRequest = options.onPermissionRequest;
@@ -23,7 +23,7 @@ export function createCrag(options: CragOptions = {}): CragInstance {
   const registry = new Map<string, RegistryEntry>();
 
   const instance = {
-    use(skill: Skill): CragInstance {
+    use(skill: Skill): BevelInstance {
       const boundOps: Record<string, (...args: unknown[]) => unknown> = {};
 
       for (const [opName, opDef] of Object.entries(skill.operations) as [
@@ -61,7 +61,7 @@ export function createCrag(options: CragOptions = {}): CragInstance {
       // biome-ignore lint/suspicious/noExplicitAny: dynamic property assignment for skill namespaces
       (instance as any)[skill.name] = boundOps;
 
-      return instance as CragInstance;
+      return instance as BevelInstance;
     },
 
     search(query: string): SearchResult[] {
@@ -69,5 +69,5 @@ export function createCrag(options: CragOptions = {}): CragInstance {
     },
   };
 
-  return instance as CragInstance;
+  return instance as BevelInstance;
 }

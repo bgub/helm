@@ -9,7 +9,7 @@ import {
   type UIMessage,
 } from "ai";
 import {
-  createCrag,
+  createBevel,
   edit,
   fs,
   git,
@@ -17,12 +17,12 @@ import {
   http,
   type Permission,
   shell,
-} from "crag";
+} from "bevel";
 import { z } from "zod";
 import { requestApproval } from "../../../lib/approvals";
 import { evaluate } from "../../../lib/sandbox";
 
-const SYSTEM_PROMPT = `You are a helpful assistant with access to the local system through crag, a typed tool framework.
+const SYSTEM_PROMPT = `You are a helpful assistant with access to the local system through bevel, a typed tool framework.
 
 You have two tools: search and execute.
 
@@ -30,7 +30,7 @@ You have two tools: search and execute.
 Use search to discover available operations. The search uses keyword matching against operation names, descriptions, and tags. Use short, specific keywords — e.g. "list", "read", "write", "git", "grep", "http". Do NOT use long natural-language queries; they will return no results.
 
 ## execute
-Use execute to run JavaScript code with the crag agent API available as \`agent\`.
+Use execute to run JavaScript code with the bevel agent API available as \`agent\`.
 
 Write async JS code using the agent API. Available skills:
 
@@ -102,7 +102,7 @@ export async function POST(req: Request) {
       // Safe because tool calls execute sequentially.
       let activeToolCallId = "";
 
-      const agent = createCrag({
+      const agent = createBevel({
         permissions: permissions ?? {},
         defaultPermission: "allow",
         onPermissionRequest: (operation, args) => {
@@ -132,7 +132,7 @@ export async function POST(req: Request) {
         tools: {
           search: tool({
             description:
-              "Search for available crag operations by keyword. Use short keywords like 'list', 'read', 'file', 'git', 'grep'. Returns matching operations with qualifiedName, description, and signature.",
+              "Search for available bevel operations by keyword. Use short keywords like 'list', 'read', 'file', 'git', 'grep'. Returns matching operations with qualifiedName, description, and signature.",
             inputSchema: z.object({
               query: z
                 .string()
@@ -144,7 +144,7 @@ export async function POST(req: Request) {
           }),
           execute: tool({
             description:
-              "Execute JavaScript code with the crag agent API available as `agent`. Use `await` for agent calls. Return the value to show.",
+              "Execute JavaScript code with the bevel agent API available as `agent`. Use `await` for agent calls. Return the value to show.",
             inputSchema: z.object({
               code: z
                 .string()

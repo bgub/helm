@@ -1,16 +1,16 @@
 ---
 title: Quick Start
-description: Get up and running with crag in minutes.
+description: Get up and running with bevel in minutes.
 ---
 
 ## Create an agent
 
-Import `createCrag` and built-in skills, then chain `.use()` to register them:
+Import `createBevel` and built-in skills, then chain `.use()` to register them:
 
 ```ts
-import { createCrag, fs, git, grep } from "crag";
+import { createBevel, fs, git, grep } from "bevel";
 
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.readFile": "allow",
     "fs.writeFile": "ask",

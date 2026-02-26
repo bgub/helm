@@ -3,12 +3,12 @@ title: "http"
 description: Built-in HTTP client skill reference.
 ---
 
-The `http` skill provides an HTTP client using Node's built-in `fetch`. No external dependencies. Import it from `crag` and register it with `.use()`:
+The `http` skill provides an HTTP client using Node's built-in `fetch`. No external dependencies. Import it from `bevel` and register it with `.use()`:
 
 ```ts
-import { createCrag, http } from "crag";
+import { createBevel, http } from "bevel";
 
-const agent = createCrag().use(http());
+const agent = createBevel().use(http());
 ```
 
 ## Operations

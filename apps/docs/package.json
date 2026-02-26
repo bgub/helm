@@ -1,5 +1,5 @@
 {
-  "name": "@crag/docs",
+  "name": "@bevel/docs",
   "private": true,
   "type": "module",
   "scripts": {

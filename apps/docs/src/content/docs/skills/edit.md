@@ -3,12 +3,12 @@ title: "edit"
 description: Built-in file editing skill reference.
 ---
 
-The `edit` skill provides file editing operations — replace text, insert lines, remove lines, and apply batch edits. Import it from `crag` and register it with `.use()`:
+The `edit` skill provides file editing operations — replace text, insert lines, remove lines, and apply batch edits. Import it from `bevel` and register it with `.use()`:
 
 ```ts
-import { createCrag, edit } from "crag";
+import { createBevel, edit } from "bevel";
 
-const agent = createCrag().use(edit());
+const agent = createBevel().use(edit());
 ```
 
 ## Operations

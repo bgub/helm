@@ -1,4 +1,4 @@
-export { createCrag } from "./create-crag.ts";
+export { createBevel } from "./create-bevel.ts";
 export { defineSkill } from "./define-skill.ts";
 export { PermissionDeniedError, resolvePermission } from "./permissions.ts";
 export type { EditOp } from "./skills/edit.ts";
@@ -24,9 +24,9 @@ export { http } from "./skills/http.ts";
 export type { ExecResult, ShellExecOptions } from "./skills/shell.ts";
 export { shell } from "./skills/shell.ts";
 export type {
+  BevelInstance,
+  BevelOptions,
   BoundOperations,
-  CragInstance,
-  CragOptions,
   OperationDef,
   Permission,
   PermissionPolicy,

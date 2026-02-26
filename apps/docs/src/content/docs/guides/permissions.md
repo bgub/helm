@@ -1,6 +1,6 @@
 ---
 title: Permissions
-description: How crag resolves and enforces operation permissions.
+description: How bevel resolves and enforces operation permissions.
 ---
 
 ## Permission levels
@@ -20,10 +20,10 @@ Permissions are resolved using a first-match strategy:
 1. **Exact match** in the policy — `"fs.readFile": "allow"`
 2. **Wildcard match** — `"fs.*": "ask"`
 3. **Operation default** — set by the skill author via `defaultPermission`
-4. **Global default** — the `defaultPermission` option passed to `createCrag()` (defaults to `"ask"`)
+4. **Global default** — the `defaultPermission` option passed to `createBevel()` (defaults to `"ask"`)
 
 ```ts
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.readFile": "allow",  // exact match
     "fs.*": "ask",           // wildcard
@@ -38,7 +38,7 @@ const agent = createCrag({
 When an operation resolves to `"ask"`, the `onPermissionRequest` callback is called with the qualified name and the arguments:
 
 ```ts
-const agent = createCrag({
+const agent = createBevel({
   onPermissionRequest: async (operation, args) => {
     console.log(`${operation} requested with args:`, args);
     return true; // return false to deny
@@ -53,7 +53,7 @@ If no callback is provided and an operation resolves to `"ask"`, a `PermissionDe
 When an operation is denied (either by policy or by the callback), a `PermissionDeniedError` is thrown:
 
 ```ts
-import { PermissionDeniedError } from "crag";
+import { PermissionDeniedError } from "bevel";
 
 try {
   await agent.fs.rm("./important-file.txt");

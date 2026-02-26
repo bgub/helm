@@ -1,5 +1,5 @@
 ---
-title: crag
+title: bevel
 description: A typed TypeScript framework for AI agents — call typed functions instead of parsing CLI stdout.
 template: splash
 hero:
@@ -9,7 +9,7 @@ hero:
       link: /getting-started/introduction/
       icon: right-arrow
     - text: View on GitHub
-      link: https://github.com/bgub/crag
+      link: https://github.com/bgub/bevel
       icon: external
       variant: minimal
 ---
@@ -26,9 +26,9 @@ export const search = `const results = agent.search("read file");
 
 const { content } = await agent.fs.readFile("./package.json");`;
 
-export const permissions = `import { createCrag, fs, git, grep } from "crag";
+export const permissions = `import { createBevel, fs, git, grep } from "bevel";
 
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.readFile": "allow",  // runs immediately
     "fs.*": "ask",            // prompts via callback
@@ -61,7 +61,7 @@ export const skill = `const weather = defineSkill({
   },
 });
 
-const agent = createCrag().use(fs()).use(weather);
+const agent = createBevel().use(fs()).use(weather);
 const { temp, sky } = await agent.weather.forecast("Seattle");`;
 
 <div class="not-content grid grid-cols-1 md:grid-cols-2 gap-4 max-w-full">

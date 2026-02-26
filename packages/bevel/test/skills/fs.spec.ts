@@ -2,14 +2,14 @@ import * as nodeFs from "node:fs/promises";
 import * as os from "node:os";
 import * as nodePath from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createCrag } from "../../src/create-crag.ts";
+import { createBevel } from "../../src/create-bevel.ts";
 import { fs } from "../../src/skills/fs.ts";
 
 describe("fs skill", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await nodeFs.mkdtemp(nodePath.join(os.tmpdir(), "crag-fs-test-"));
+    tmpDir = await nodeFs.mkdtemp(nodePath.join(os.tmpdir(), "bevel-fs-test-"));
   });
 
   afterEach(async () => {
@@ -17,7 +17,7 @@ describe("fs skill", () => {
   });
 
   const agent = () =>
-    createCrag({ permissions: { "fs.*": "allow" } }).use(fs());
+    createBevel({ permissions: { "fs.*": "allow" } }).use(fs());
 
   it("reads a file", async () => {
     const filePath = nodePath.join(tmpDir, "test.txt");

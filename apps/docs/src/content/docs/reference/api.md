@@ -1,18 +1,18 @@
 ---
 title: API Reference
-description: Complete reference for all crag exports.
+description: Complete reference for all bevel exports.
 ---
 
 ## Functions
 
-### `createCrag(options?)`
+### `createBevel(options?)`
 
-Create a new crag instance.
+Create a new bevel instance.
 
 ```ts
-import { createCrag } from "crag";
+import { createBevel } from "bevel";
 
-const agent = createCrag({
+const agent = createBevel({
   permissions: { "fs.readFile": "allow" },
   defaultPermission: "ask",
   onPermissionRequest: async (op, args) => true,
@@ -27,14 +27,14 @@ const agent = createCrag({
 | `defaultPermission` | `Permission` | `"ask"` | Global fallback permission |
 | `onPermissionRequest` | `(operation: string, args: unknown[]) => Promise<boolean> \| boolean` | `undefined` | Called when permission is `"ask"` |
 
-**Returns:** `CragInstance`
+**Returns:** `BevelInstance`
 
 ### `defineSkill(config)`
 
 Define a custom skill with full type inference.
 
 ```ts
-import { defineSkill } from "crag";
+import { defineSkill } from "bevel";
 
 const mySkill = defineSkill({
   name: "mySkill",
@@ -75,8 +75,8 @@ Resolve the permission level for an operation. Used internally, but exported for
 File system operations. See the [fs skill reference](/skills/fs/).
 
 ```ts
-import { fs } from "crag";
-const agent = createCrag().use(fs());
+import { fs } from "bevel";
+const agent = createBevel().use(fs());
 ```
 
 ### `git(opts?)`
@@ -84,8 +84,8 @@ const agent = createCrag().use(fs());
 Git operations. Takes optional `{ cwd?: string }`. See the [git skill reference](/skills/git/).
 
 ```ts
-import { git } from "crag";
-const agent = createCrag().use(git({ cwd: "/repo" }));
+import { git } from "bevel";
+const agent = createBevel().use(git({ cwd: "/repo" }));
 ```
 
 ### `grep(opts?)`
@@ -93,8 +93,8 @@ const agent = createCrag().use(git({ cwd: "/repo" }));
 Recursive file search. Takes optional `{ cwd?: string }`. See the [grep skill reference](/skills/grep/).
 
 ```ts
-import { grep } from "crag";
-const agent = createCrag().use(grep());
+import { grep } from "bevel";
+const agent = createBevel().use(grep());
 ```
 
 ### `edit()`
@@ -102,8 +102,8 @@ const agent = createCrag().use(grep());
 File editing operations. See the [edit skill reference](/skills/edit/).
 
 ```ts
-import { edit } from "crag";
-const agent = createCrag().use(edit());
+import { edit } from "bevel";
+const agent = createBevel().use(edit());
 ```
 
 ### `shell(opts?)`
@@ -111,8 +111,8 @@ const agent = createCrag().use(edit());
 Shell command execution. Takes optional `{ cwd?, env?, timeout? }`. See the [shell skill reference](/skills/shell/).
 
 ```ts
-import { shell } from "crag";
-const agent = createCrag().use(shell());
+import { shell } from "bevel";
+const agent = createBevel().use(shell());
 ```
 
 ### `http()`
@@ -120,8 +120,8 @@ const agent = createCrag().use(shell());
 HTTP client. See the [http skill reference](/skills/http/).
 
 ```ts
-import { http } from "crag";
-const agent = createCrag().use(http());
+import { http } from "bevel";
+const agent = createBevel().use(http());
 ```
 
 ## Instance methods
@@ -131,7 +131,7 @@ const agent = createCrag().use(http());
 Register a skill and return a new instance with the skill's types merged in.
 
 ```ts
-const agent = createCrag().use(fs()).use(git()).use(grep());
+const agent = createBevel().use(fs()).use(git()).use(grep());
 ```
 
 ### `agent.search(query)`
@@ -157,10 +157,10 @@ type Permission = "allow" | "ask" | "deny";
 type PermissionPolicy = Record<string, Permission>;
 ```
 
-### `CragOptions`
+### `BevelOptions`
 
 ```ts
-interface CragOptions {
+interface BevelOptions {
   permissions?: PermissionPolicy;
   onPermissionRequest?: (operation: string, args: unknown[]) => Promise<boolean> | boolean;
   defaultPermission?: Permission;
@@ -221,13 +221,13 @@ type BoundOperations<Ops extends Record<string, OperationDef>> = {
 };
 ```
 
-### `CragInstance<S>`
+### `BevelInstance<S>`
 
 ```ts
-type CragInstance<S> = BoundSkills<S> & {
+type BevelInstance<S> = BoundSkills<S> & {
   use<Name extends string, Ops extends Record<string, OperationDef>>(
     skill: Skill<Name, Ops>,
-  ): CragInstance<S & Record<Name, Ops>>;
+  ): BevelInstance<S & Record<Name, Ops>>;
   search(query: string): SearchResult[];
 };
 ```

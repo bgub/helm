@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const config: NextConfig = {
-  serverExternalPackages: ["crag"],
+  serverExternalPackages: ["bevel"],
 };
 
 export default config;

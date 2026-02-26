@@ -3,7 +3,7 @@ import * as nodeFs from "node:fs/promises";
 import * as os from "node:os";
 import * as nodePath from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { createCrag } from "../../src/create-crag.ts";
+import { createBevel } from "../../src/create-bevel.ts";
 import { git } from "../../src/skills/git.ts";
 
 function execGit(args: string[], cwd: string): Promise<string> {
@@ -19,7 +19,7 @@ describe("git skill", () => {
   let tmpDir: string;
 
   beforeEach(async () => {
-    tmpDir = await nodeFs.mkdtemp(nodePath.join(os.tmpdir(), "crag-git-test-"));
+    tmpDir = await nodeFs.mkdtemp(nodePath.join(os.tmpdir(), "bevel-git-test-"));
     await execGit(["init"], tmpDir);
     await execGit(["config", "user.email", "test@test.com"], tmpDir);
     await execGit(["config", "user.name", "Test"], tmpDir);
@@ -34,7 +34,9 @@ describe("git skill", () => {
   });
 
   const agent = () =>
-    createCrag({ permissions: { "git.*": "allow" } }).use(git({ cwd: tmpDir }));
+    createBevel({ permissions: { "git.*": "allow" } }).use(
+      git({ cwd: tmpDir }),
+    );
 
   describe("status", () => {
     it("reports clean status", async () => {

@@ -1,4 +1,4 @@
-# crag
+# bevel
 
 A typed TypeScript framework for AI agents to use instead of the shell. Agents discover and call typed functions instead of parsing CLI stdout.
 
@@ -9,7 +9,7 @@ A typed TypeScript framework for AI agents to use instead of the shell. Agents d
 Instead of agents shelling out (`bash("git status")`) and parsing strings, they import and call typed functions with structured inputs and outputs:
 
 ```ts
-const agent = createCrag()
+const agent = createBevel()
   .use(git())
   .use(fs())
   .use(vercel({ token: process.env.VERCEL_TOKEN }))
@@ -25,7 +25,7 @@ agent.vercel.dns.create(...)  // -> { id: string, type: "A", ... }
 - **Search over the registry.** A single `search(query)` function lets agents discover available operations without loading the full skill set into context.
 - **Permissions are first-class.** Every operation has a permission level. Hosts define policies per-skill or per-operation:
   ```ts
-  createCrag({
+  createBevel({
     permissions: {
       "git.status": "allow",
       "git.push": "ask",
@@ -44,7 +44,7 @@ agent.vercel.dns.create(...)  // -> { id: string, type: "A", ... }
 
 - Sandboxed code execution / eval
 - Browser runtime support
-- Being a full agent framework — crag is a tool library, not an orchestrator
+- Being a full agent framework — bevel is a tool library, not an orchestrator
 
 ## Tech stack
 

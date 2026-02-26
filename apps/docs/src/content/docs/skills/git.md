@@ -3,14 +3,14 @@ title: "git"
 description: Built-in Git skill reference.
 ---
 
-The `git` skill provides typed Git operations. Import it from `crag` and register it with `.use()`:
+The `git` skill provides typed Git operations. Import it from `bevel` and register it with `.use()`:
 
 ```ts
-import { createCrag, git } from "crag";
+import { createBevel, git } from "bevel";
 
-const agent = createCrag().use(git());
+const agent = createBevel().use(git());
 // or with a custom working directory:
-const agent2 = createCrag().use(git({ cwd: "/path/to/repo" }));
+const agent2 = createBevel().use(git({ cwd: "/path/to/repo" }));
 ```
 
 ## Operations

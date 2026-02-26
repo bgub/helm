@@ -1,18 +1,18 @@
-<h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">crag</h1>
+<h1 align="center" style="text-align: center; width: fit-content; margin-left: auto; margin-right: auto;">bevel</h1>
 
 <p align="center">
-  <a href="https://github.com/bgub/crag/actions">CI</a>
+  <a href="https://github.com/bgub/bevel/actions">CI</a>
   ·
-  <a href="https://github.com/bgub/crag/releases">Releases</a>
+  <a href="https://github.com/bgub/bevel/releases">Releases</a>
   ·
-  <a href="https://github.com/bgub/crag/issues">Issues</a>
+  <a href="https://github.com/bgub/bevel/issues">Issues</a>
 </p>
 
 <span align="center">
 
-[![npm](https://img.shields.io/npm/v/crag?logo=npm&label=npm)](https://www.npmjs.com/package/crag)
-[![CI](https://github.com/bgub/crag/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/crag/actions)
-[![Codecov](https://codecov.io/github/bgub/crag/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/crag)
+[![npm](https://img.shields.io/npm/v/bevel?logo=npm&label=npm)](https://www.npmjs.com/package/bevel)
+[![CI](https://github.com/bgub/bevel/actions/workflows/ci.yml/badge.svg)](https://github.com/bgub/bevel/actions)
+[![Codecov](https://codecov.io/github/bgub/bevel/branch/main/graph/badge.svg)](https://codecov.io/github/bgub/bevel)
 
 </span>
 
@@ -21,15 +21,15 @@ A typed TypeScript framework for AI agents. Call typed functions instead of pars
 ## Install
 
 ```bash
-npm install crag
+npm install bevel
 ```
 
 ## Quick start
 
 ```ts
-import { createCrag, fs } from "crag";
+import { createBevel, fs } from "bevel";
 
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.read": "allow",
     "fs.write": "ask",
@@ -47,11 +47,11 @@ const { content } = await agent.fs.read("./package.json");
 const { entries } = await agent.fs.list("./src", { glob: "*.ts" });
 ```
 
-## Why crag?
+## Why bevel?
 
 Agents today shell out and parse strings. That means no type safety, no structured errors, and no way to control what operations are allowed.
 
-crag gives agents typed functions with structured inputs and outputs:
+bevel gives agents typed functions with structured inputs and outputs:
 
 ```ts
 // Instead of this:
@@ -73,7 +73,7 @@ const { staged, unstaged } = await agent.git.status();
 ## Defining custom skills
 
 ```ts
-import { defineSkill } from "crag";
+import { defineSkill } from "bevel";
 
 const weather = defineSkill({
   name: "weather",
@@ -92,7 +92,7 @@ const weather = defineSkill({
   },
 });
 
-const agent = createCrag().use(weather);
+const agent = createBevel().use(weather);
 const { temp, sky } = await agent.weather.forecast("Seattle");
 ```
 
@@ -106,7 +106,7 @@ Resolution order (first match wins):
 4. Global default — `defaultPermission` option (defaults to `"ask"`)
 
 ```ts
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.read": "allow",
     "fs.*": "ask",
@@ -146,7 +146,7 @@ const { content } = await agent.fs.read("./package.json");
 src/
   index.ts              — public API re-exports
   types.ts              — all type definitions
-  create-crag.ts        — createCrag() factory
+  create-bevel.ts        — createBevel() factory
   define-skill.ts       — defineSkill() helper
   permissions.ts        — permission resolution
   search.ts             — text search over the registry

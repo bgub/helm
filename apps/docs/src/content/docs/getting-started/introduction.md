@@ -1,6 +1,6 @@
 ---
 title: Introduction
-description: What crag is and why it exists.
+description: What bevel is and why it exists.
 ---
 
 ## The problem
@@ -16,12 +16,12 @@ This means no type safety, no structured errors, and no way to control what oper
 
 ## The solution
 
-crag gives agents typed functions with structured inputs and outputs:
+bevel gives agents typed functions with structured inputs and outputs:
 
 ```ts
-import { createCrag, fs, git, grep } from "crag";
+import { createBevel, fs, git, grep } from "bevel";
 
-const agent = createCrag({
+const agent = createBevel({
   permissions: {
     "fs.readFile": "allow",
     "fs.writeFile": "ask",
@@ -47,7 +47,7 @@ await agent.fs.writeFile("./output.json", JSON.stringify(data));
 
 ## Built-in skills
 
-crag ships with six built-in skills covering common agent workflows:
+bevel ships with six built-in skills covering common agent workflows:
 
 | Skill | Description | Example |
 |-------|-------------|---------|
