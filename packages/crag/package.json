@@ -1,6 +1,6 @@
 {
   "name": "crag",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A typed TypeScript framework for AI agents — call typed functions instead of parsing CLI stdout",
   "keywords": [
     "ai",

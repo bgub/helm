@@ -1,12 +1,11 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
   "release-type": "node",
-  "prerelease": true,
+  "bump-minor-pre-major": true,
   "packages": {
     "packages/crag": {
       "package-name": "crag",
-      "extra-files": ["jsr.json"],
-      "prerelease-type": "alpha"
+      "extra-files": ["jsr.json"]
     }
   }
 }
