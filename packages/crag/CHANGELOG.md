@@ -1,5 +1,22 @@
 # Changelog
 
+## 0.1.0 (2026-02-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* initial public API
+
+### Features
+
+* add built-in skills, permissions, search, and MCP surface ([e34cdf7](https://github.com/bgub/crag/commit/e34cdf721a3ff4457ba90f7fefbe24f3961ae359))
+* initial release ([5ebc360](https://github.com/bgub/crag/commit/5ebc360a2657f83048fd4262e1bce430458b0c56))
+
+
+### Miscellaneous Chores
+
+* bootstrap release ([26db2d1](https://github.com/bgub/crag/commit/26db2d16eef9074770b46fabc342d31c78dc4ef0))
+
 ## [1.0.2](https://github.com/bgub/ts-base/compare/ts-base-v1.0.1...ts-base-v1.0.2) (2025-09-17)
 
 
