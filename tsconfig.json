@@ -7,13 +7,20 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "strict": true,
+    "exactOptionalPropertyTypes": true,
     "noUnusedLocals": true,
+    "noImplicitOverride": true,
     "declaration": true,
     "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
     "esModuleInterop": true,
     "isolatedModules": true,
     "verbatimModuleSyntax": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "plugins": [
+      {
+        "name": "@effect/language-service"
+      }
+    ]
   }
 }

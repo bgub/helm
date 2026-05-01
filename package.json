@@ -2,14 +2,18 @@
   "private": true,
   "packageManager": "pnpm@10.17.1",
   "scripts": {
+    "prepare": "effect-language-service patch",
     "build": "turbo run build",
     "dev": "turbo run dev --ui tui",
     "test": "turbo run test",
+    "typecheck": "tsc --noEmit",
     "lint": "biome check --error-on-warnings",
     "format": "biome format --write"
   },
   "devDependencies": {
     "@biomejs/biome": "2.4.4",
-    "turbo": "^2"
+    "@effect/language-service": "^0.77.0",
+    "turbo": "^2",
+    "typescript": "^5.9.3"
   }
 }

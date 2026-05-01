@@ -1,14 +1,12 @@
 import { type ChildProcess, spawn } from "node:child_process";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
-// Resolve worker at call time to avoid Turbopack static analysis.
-// Uses process.cwd() (the demo app root) since Next.js bundles this file
-// into .next/server/ where relative paths to the source .mjs would break.
-function getWorkerPath(): string {
-  return path.join(process.cwd(), "lib", "sandbox-worker.mjs");
-}
+const DEFAULT_TIMEOUT_MS = 30_000;
 
-const TIMEOUT_MS = 30_000;
+// Resolve the worker file relative to this module
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const WORKER_PATH = path.join(__dirname, "sandbox-worker.mjs");
 
 interface AgentCallMessage {
   type: "agent-call";
@@ -30,21 +28,31 @@ interface ReadyMessage {
 
 type WorkerMessage = AgentCallMessage | ResultMessage | ReadyMessage;
 
-// biome-ignore lint/suspicious/noExplicitAny: agent shape is dynamic
-function walkAgent(agent: any, method: string): unknown {
+/**
+ * Walk a dotted method path on the agent object and return the function.
+ */
+function walkAgent(agent: unknown, method: string): unknown {
   const parts = method.split(".");
-  let current = agent;
+  let current: unknown = agent;
   for (const part of parts) {
-    current = current[part];
+    if (current == null || typeof current !== "object") return undefined;
+    current = (current as Record<string, unknown>)[part];
   }
   return current;
 }
 
-export async function evaluate(code: string, agent: unknown): Promise<unknown> {
+/**
+ * Evaluate JavaScript code in a sandboxed SES compartment.
+ * The `agent` object is available in scope via a Proxy that routes
+ * calls back to this process via IPC.
+ */
+export async function evaluate(
+  code: string,
+  agent: unknown,
+  timeoutMs = DEFAULT_TIMEOUT_MS,
+): Promise<unknown> {
   return new Promise((resolve, reject) => {
-    // Use spawn instead of fork so Turbopack doesn't statically analyze the
-    // worker path. The IPC channel is established via the stdio option.
-    const child: ChildProcess = spawn(process.execPath, [getWorkerPath()], {
+    const child: ChildProcess = spawn(process.execPath, [WORKER_PATH], {
       stdio: ["pipe", "pipe", "pipe", "ipc"],
     });
 
@@ -56,7 +64,7 @@ export async function evaluate(code: string, agent: unknown): Promise<unknown> {
       timer = setTimeout(() => {
         child.kill();
         reject(new Error("Sandbox evaluation timed out"));
-      }, TIMEOUT_MS);
+      }, timeoutMs);
     }
 
     function cleanup() {
@@ -95,7 +103,9 @@ export async function evaluate(code: string, agent: unknown): Promise<unknown> {
             });
             return;
           }
-          const result = await fn(...msg.args);
+          const result = await (fn as (...args: unknown[]) => unknown)(
+            ...msg.args,
+          );
           resetTimeout();
           child.send({
             type: "agent-response",

@@ -1,13 +1,5 @@
-import {
-  createHelm,
-  edit,
-  fs,
-  git,
-  grep,
-  http,
-  type Permission,
-  shell,
-} from "@bgub/helm";
+import type { Permission } from "@bgub/helm";
+import { connect } from "@bgub/helm-server/client";
 import {
   convertToModelMessages,
   createUIMessageStream,
@@ -19,8 +11,8 @@ import {
   type UIMessage,
 } from "ai";
 import { z } from "zod";
-import { requestApproval } from "../../../lib/approvals";
-import { evaluate } from "../../../lib/sandbox";
+import { waitForApproval } from "../../../lib/approvals";
+import { getServer, HELM_WS_URL } from "../../../lib/helm";
 
 const SYSTEM_PROMPT = `You are a helpful assistant with access to the local system through helm, a typed tool framework.
 
@@ -95,34 +87,35 @@ export async function POST(req: Request) {
   }: { messages: UIMessage[]; permissions?: Record<string, Permission> } =
     await req.json();
 
+  // Ensure helm-server is running
+  await getServer();
+
   const stream = createUIMessageStream({
     execute: async ({ writer }) => {
-      // Tracks the current tool call ID so onPermissionRequest can tie
-      // approval requests to the specific execute call that triggered them.
-      // Safe because tool calls execute sequentially.
       let activeToolCallId = "";
 
-      const agent = createHelm({
-        permissions: permissions ?? {},
-        defaultPermission: "allow",
-        onPermissionRequest: (operation, args) => {
-          const { id, approved } = requestApproval(
-            operation,
-            args as unknown[],
-          );
+      // Connect to the helm-server as a client
+      const session = await connect(HELM_WS_URL, {
+        onApprovalRequest: async ({ approvalId, operation, args }) => {
+          // Forward the approval request through the AI SDK stream
           writer.write({
             type: "data-approval-request",
-            data: { id, operation, args, toolCallId: activeToolCallId },
+            data: {
+              id: approvalId,
+              operation,
+              args,
+              toolCallId: activeToolCallId,
+            },
           });
-          return approved;
+          // Wait for the user to respond via POST /api/approvals
+          return waitForApproval(approvalId);
         },
-      })
-        .use(fs())
-        .use(git())
-        .use(grep())
-        .use(edit())
-        .use(shell())
-        .use(http());
+      });
+
+      // Apply permission policy from the frontend
+      if (permissions && Object.keys(permissions).length > 0) {
+        session.updatePermissions(permissions);
+      }
 
       const result = streamText({
         model: gateway("minimax/minimax-m2.5"),
@@ -140,7 +133,7 @@ export async function POST(req: Request) {
                   "Short keyword to search for, e.g. 'list', 'read', 'git', 'grep'",
                 ),
             }),
-            execute: async ({ query }) => agent.search(query),
+            execute: async ({ query }) => session.search(query),
           }),
           execute: tool({
             description:
@@ -155,7 +148,7 @@ export async function POST(req: Request) {
             execute: async ({ code }, { toolCallId }) => {
               activeToolCallId = toolCallId;
               try {
-                return await evaluate(code, agent);
+                return await session.execute(code);
               } catch (e) {
                 return { error: e instanceof Error ? e.message : String(e) };
               }

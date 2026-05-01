@@ -18,5 +18,6 @@ package-lock.json
 yarn.lock
 
 .claude/
+.reference/
 *.tsbuildinfo
 .astro/

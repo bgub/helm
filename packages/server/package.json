@@ -1,31 +1,35 @@
 {
-  "name": "@bgub/helm",
-  "version": "0.2.0",
-  "description": "A typed TypeScript framework for AI agents — call typed functions instead of parsing CLI stdout",
+  "name": "@bgub/helm-server",
+  "version": "0.1.0",
+  "description": "Server + client SDK for helm — remote tool execution with permissions, tracing, and sandboxing",
   "keywords": [
     "ai",
     "agent",
     "tools",
-    "typed",
-    "typescript"
+    "server",
+    "sandbox",
+    "effect"
   ],
   "homepage": "https://github.com/bgub/helm",
   "type": "module",
   "exports": {
     ".": {
-      "source": "./src/index.ts",
       "import": "./dist/index.mjs",
       "types": "./dist/index.d.mts"
+    },
+    "./client": {
+      "import": "./dist/client.mjs",
+      "types": "./dist/client.d.mts"
     }
   },
-  "types": "./dist/index.d.mts",
   "sideEffects": false,
   "files": [
-    "dist"
+    "dist",
+    "src/server/sandbox-worker.mjs"
   ],
   "scripts": {
     "build": "tsdown",
-    "dev": "tsdown --watch",
+    "dev": "tsx --conditions source --watch src/dev.ts",
     "test": "vitest run --coverage"
   },
   "author": "Ben Gubler <nebrelbug@gmail.com>",
@@ -37,10 +41,18 @@
   "engines": {
     "node": ">=20"
   },
+  "dependencies": {
+    "@bgub/helm": "workspace:*",
+    "effect": "^3.14.0",
+    "ses": "^1.12.0",
+    "ws": "^8.18.0"
+  },
   "devDependencies": {
     "@types/node": "^25.3.0",
+    "@types/ws": "^8.18.0",
     "@vitest/coverage-istanbul": "4.0.18",
     "tsdown": "^0.20.3",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.2",
     "vitest": "^4.0.18"
   }
